@@ -1,11 +1,7 @@
 ---
-title: "ISSS608-VAA"
+title: "ISSS608-VAA Lin Lin"
 ---
 
-This is a Quarto website.
+Welcome to **ISSS 608 Visual analytics and application**.
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
-
-```{r}
-1 + 1
-```
+In this website, you will find my coursework prepared for this course.
