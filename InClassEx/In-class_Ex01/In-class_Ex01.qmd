@@ -1,0 +1,134 @@
+---
+title: "In-class_Ex01"
+author: "Lin Lin"
+---
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+## Importing the data
+
+(data will load in environment)
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+
+
+```
+
+### Plot the diagram with filliped diagram coordinate and background
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = RACE)) +
+         geom_bar() + 
+        coord_flip() +
+        theme_minimal()+
+        theme(panel.background = element_rect(fill = "lightblue", colour = "lightblue", linetype = "solid"))
+```
+### Make the visualization better by y axis
+- y-aixs label is not clear (i.e. count)
+- To support effective comparison, the bars should be sorted by their resepctive frequencies.
+- For static graph, frequency values should be added to provide addition information.
+
+```{r}
+
+ggplot(data = exam_data,
+       aes(x=reorder(RACE,RACE,
+                     function(x) -length(x)))) +
+         geom_bar() + 
+        ylim(0,220) +
+        theme_minimal()+
+        theme(panel.background = element_rect(fill = "lightblue", colour = "lightblue", linetype = "solid")) + 
+ geom_text(stat="count", 
+      aes(label=paste0(..count.., ", ", 
+      round(..count../sum(..count..)*100, 1), "%")),
+      vjust=-1) +
+  xlab("Race") +
+  ylab("No. of\nPupils")
+
+
+```
+
+### Use fct_infreq() to to sort
+ mutate(RACE = fct_infreq(RACE)) %>%
+
+
+```{r}
+exam_data %>%
+  mutate(RACE = fct_infreq(RACE)) %>%
+  ggplot(aes(x = RACE)) + 
+  geom_bar()+
+  ylim(0,220) +
+  geom_text(stat="count", 
+      aes(label=paste0(..count.., ", ", 
+      round(..count../sum(..count..)*100,
+            1), "%")),
+      vjust=-1) +
+  xlab("Race") +
+  ylab("No. of\nPupils") +
+  theme(axis.title.y=element_text(angle = 0))
+
+
+```
+
+### Plot math with histogram diagram
+
+Add in dashed line for mean and median value
+and fill color use light blue, change border color black
+
+
+```{r}
+ggplot(data=exam_data, 
+       aes(x= MATHS)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue") +
+  geom_vline(aes(xintercept=mean(MATHS, na.rm=T)),
+             color="red", 
+             linetype="dashed", 
+             size=1) +
+  geom_vline(aes(xintercept=median(MATHS, na.rm=T)),
+             color="grey30",
+             linetype="dashed", 
+             size=1)
+```
+
+### Overlay histograms 
+- The background histograms show the distribution of English scores for all pupils.
+
+- facet_wrap according to gender
+
+```{r}
+d <- exam_data   
+d_bg <- d[, -3]  
+
+ggplot(d, aes(x = ENGLISH, fill = GENDER)) +
+  geom_histogram(data = d_bg, fill = "grey", alpha = .5) +
+  geom_histogram(colour = "black") +
+  facet_wrap(~ GENDER) +
+  guides(fill = FALSE) +  
+  theme_bw()
+```
+
+
+### Overlay the scatter diagram with axis
+
+- 
+```{r}
+ggplot(data=exam_data, 
+       aes(x=MATHS, y=ENGLISH)) +
+  geom_point() +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100)) +
+  geom_hline(yintercept=50,
+             linetype="dashed",
+             color="grey60",
+             size=1) + 
+  geom_vline(xintercept=50, 
+             linetype="dashed",
+             color="grey60",
+             size=1)
+
+```

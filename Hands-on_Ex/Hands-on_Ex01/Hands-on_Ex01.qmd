@@ -13,7 +13,7 @@ The code chunk below uses p_load() of pacman package to check if tidyverse packa
 pacman::p_load(tidyverse)
 ```
 
-## Importing the data 
+## Importing the data
 
 (data will load in environment)
 
@@ -25,7 +25,7 @@ exam_data <- read_csv("data/Exam_data.csv")
 
 when we use #\| eval: false ==\> shows code chunk not the chart
 
-when we use #\| echo: false ==\> shows visual not the visual
+when we use #\| echo: true==\> shows visual not the code
 
 ```{r}
 
