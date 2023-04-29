@@ -295,5 +295,9 @@ girafe(code = print(p1 + p2),
          )
        ) 
 
+#Note ID is important field: The data_id aesthetic is critical to link observations between plots and the tooltip aesthetic is optional but nice to have when mouse over a point.
+
+
 
 ```
+

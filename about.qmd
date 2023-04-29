@@ -4,6 +4,8 @@ title: "About"
 
 About this site
 
+This is a site created for all ISSS608 course work
+
 ```{r}
-1 + 1
+
 ```
