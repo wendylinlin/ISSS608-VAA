@@ -1,0 +1,6 @@
+---
+title: "In-class Exercise 3"
+author: "Lin Lin"
+date: 29 April 2023
+edit: visual
+---
