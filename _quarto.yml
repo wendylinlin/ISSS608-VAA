@@ -15,12 +15,23 @@ website:
           href: "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.qmd"
         - text: "Hands-on Exercise 3 Part 2"
           href: "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03Part2.qmd"
+        - text: "Hands-on Exercise 4"
+          href: "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.qmd"
+        - text: "Hands-on Exercise 4"
+          href: "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04Chpt10.qmd"   
     - text: "In Class Exercise"
       menu:
         - text: "In Class Exercise 1"
           href: "InClassEx/In-class_Ex01/In-class_Ex01.qmd"
         - text: "In Class Exercise 3"
           href: "InClassEx/In-class_Ex03/In-class_Ex03.qmd"
+        - text: "In Class Exercise 4"
+          href: "InClassEx/In-class_Ex04/In-class_Ex04.qmd"
+    - text: "Take Home Exercise"
+      menu:
+        - text: "Take Home Exercise 1"
+          href: "TakeHomeEx/TakeHomeEx1/TakehomeExercise1.qmd"
+        
     right:    
       - href: index.qmd
         text: Home
@@ -33,8 +44,8 @@ format:
     toc: true
     
 executive:
-  echo: false
+  echo: true #if you want to display the code chunk, true is yes display code chunk
   eval: true
-  warning: false
+  warning: false  #this will make warning not appear
 editor: visual
 

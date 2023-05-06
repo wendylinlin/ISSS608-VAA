@@ -1,0 +1,137 @@
+---
+title: "In-class_Ex04"
+author: "LIN LIN"
+date: "5 May 2023"
+date-modified: "`r Sys.Date()"
+execute:
+  eval: true #if you want to run the code
+  echo: true #if you want to display the code chunk
+  warning: false
+---
+
+1.  Load library and read data
+
+```{r}
+  pacman:: p_load(rstatix, gt, patchwork, tidyverse)
+  exam_data <- read_csv("data/Exam_data.csv")
+```
+
+rstatix is a rapper for basic statistical tests, it's based on tidyverse philosophy (mentioned in hands on Ex1)
+
+![](images/rstatix.JPG)
+
+2.  plot a QQ plot
+
+```{r}
+  ggplot(exam_data, 
+         aes(sample = ENGLISH)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+3. Change component layout to tab layout
+
+::: panel-tabset
+## The plot
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+
+  ggplot(exam_data, 
+         aes(sample = ENGLISH)) +
+  stat_qq() +
+  stat_qq_line()
+```
+## The Code Chunk
+```{r}
+  #| eval: false
+  ggplot(exam_data, 
+         aes(sample = ENGLISH)) +
+  stat_qq() +
+  stat_qq_line()
+```
+:::
+
+# QUARTO CALLOUT
+There are different types we can use both {.callout-note} format or directly callout-note format
+
+::: callout-note
+This is an example of callout - note
+:::
+
+## Example of graph with html table
+
+#### do it side by side
+```{r}
+#| echo: false
+qq <-  ggplot(exam_data, 
+         aes(sample = ENGLISH)) +
+  stat_qq() +
+  stat_qq_line()
+
+#generate HTML table and convert to image
+sw_t <- exam_data %>% 
+  shapiro_test(ENGLISH) %>% 
+  gt()
+
+tmp <- tempfile(fileext = '.png') #create temp folder
+gtsave(sw_t,tmp)
+table_png <- png::readPNG(tmp, native = TRUE)
+
+qq+table_png
+
+
+```
+
+
+
+#### do it with multiple tabs
+::: panel-tabset
+## The plot
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 8
+
+  qq <-  ggplot(exam_data, 
+         aes(sample = ENGLISH)) +
+  stat_qq() +
+  stat_qq_line()
+  qq
+ 
+```
+
+## The HTML
+```{r}
+  #| echo: false
+
+  sw_t <- exam_data %>% 
+    shapiro_test(ENGLISH) %>% 
+    gt()
+  
+  tmp <- tempfile(fileext = '.png') #create temp folder
+  gtsave(sw_t,tmp)
+  png::readPNG(tmp, native = TRUE)
+  
+```
+
+## The Code Chunk
+```{r}
+  #| eval: false
+  qq <-  ggplot(exam_data, 
+         aes(sample = ENGLISH)) +
+  stat_qq() +
+  stat_qq_line()
+
+  sw_t <- exam_data %>% 
+    shapiro_test(ENGLISH) %>% 
+    gt()
+  
+  tmp <- tempfile(fileext = '.png') #create temp folder
+  gtsave(sw_t,tmp)
+  table_png <- png::readPNG(tmp, native = TRUE)
+  
+  qq+table_png
+```
+:::

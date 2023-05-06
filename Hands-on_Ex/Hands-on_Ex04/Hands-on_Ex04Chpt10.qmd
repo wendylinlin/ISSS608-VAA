@@ -1,0 +1,68 @@
+---
+title: "Hands-on_Ex04Chpt10"
+author: "Lin Lin"
+---
+
+## Visualizing the uncertainty of point estimates
+
+-   A point estimate is a single number, such as a mean.
+
+-   Uncertainty is expressed as standard error, confidence interval, or credible interval
+
+-   Important:
+
+-   Don't confuse the uncertainty of a point estimate with the variation in the sample
+
+```{r}
+    #| warning: false
+pacman::p_load(tidyverse, plotly, crosstalk, DT, ggdist, gganimate)
+exam <- read_csv("data/Exam_data.csv")
+
+```
+
+### Visualizing the uncertainty of point estimates: ggplot2 methods
+
+-   group the observation by RACE,
+
+-   computes the count of observations, mean, standard deviation and standard error of Maths by RACE, and
+
+-   save the output as a tibble data table called `my_sum`.
+
+```{r}
+    #| warning: false
+  my_sum <- exam %>%
+    group_by(RACE) %>%
+    summarise(
+      n=n(),
+      mean=mean(MATHS),
+      sd=sd(MATHS)
+      ) %>%
+    mutate(se=sd/sqrt(n-1))
+
+  knitr::kable(head(my_sum), format = 'html')
+```
+
+
+### Visualizing the uncertainty of point estimates: ggplot2 methods
+below is how reveal the standard error of mean maths score by race.
+```{r}
+  ggplot(my_sum) +
+  geom_errorbar(
+    aes(x=RACE, 
+        ymin=mean-se, 
+        ymax=mean+se), 
+    width=0.2, 
+    colour="black", 
+    alpha=0.9, 
+    size=0.5) +
+  geom_point(aes
+           (x=RACE, 
+            y=mean), 
+           stat="identity", 
+           color="red",
+           size = 1.5,
+           alpha=1) +
+  ggtitle("Standard error of mean 
+          maths score by rac")
+
+```
