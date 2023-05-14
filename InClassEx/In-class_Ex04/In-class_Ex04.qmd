@@ -29,10 +29,11 @@ rstatix is a rapper for basic statistical tests, it's based on tidyverse philoso
   stat_qq_line()
 ```
 
-3. Change component layout to tab layout
+3.  Change component layout to tab layout
 
 ::: panel-tabset
 ## The plot
+
 ```{r}
 #| echo: false
 #| fig-width: 4
@@ -43,7 +44,9 @@ rstatix is a rapper for basic statistical tests, it's based on tidyverse philoso
   stat_qq() +
   stat_qq_line()
 ```
+
 ## The Code Chunk
+
 ```{r}
   #| eval: false
   ggplot(exam_data, 
@@ -54,6 +57,7 @@ rstatix is a rapper for basic statistical tests, it's based on tidyverse philoso
 :::
 
 # QUARTO CALLOUT
+
 There are different types we can use both {.callout-note} format or directly callout-note format
 
 ::: callout-note
@@ -63,6 +67,7 @@ This is an example of callout - note
 ## Example of graph with html table
 
 #### do it side by side
+
 ```{r}
 #| echo: false
 qq <-  ggplot(exam_data, 
@@ -84,11 +89,11 @@ qq+table_png
 
 ```
 
-
-
 #### do it with multiple tabs
+
 ::: panel-tabset
 ## The plot
+
 ```{r}
 #| echo: false
 #| fig-width: 6
@@ -103,6 +108,7 @@ qq+table_png
 ```
 
 ## The HTML
+
 ```{r}
   #| echo: false
 
@@ -117,6 +123,7 @@ qq+table_png
 ```
 
 ## The Code Chunk
+
 ```{r}
   #| eval: false
   qq <-  ggplot(exam_data, 
