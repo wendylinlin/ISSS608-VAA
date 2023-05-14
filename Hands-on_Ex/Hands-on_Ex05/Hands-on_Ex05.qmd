@@ -1,0 +1,233 @@
+---
+title: "Hands-On_Ex05"
+author: "LIN LIN"
+format:
+  html: 
+    code-fold: true
+    code-summary: "Show the code"
+execute:
+  warning: false
+---
+
+## Load library and data
+
+```{r}
+pacman::p_load(igraph, tidygraph, ggraph, 
+               visNetwork, lubridate, clock,
+               tidyverse, graphlayouts)
+```
+
+```{r}
+  GAStech_nodes <- read_csv("data/GAStech_email_node.csv")
+  GAStech_edges <- read_csv("data/GAStech_email_edge-v2.csv")
+```
+
+By examine the structure of the data frame using glimpse() of dplyr, time format need to be udpated
+
+```{r}
+  glimpse(GAStech_edges)
+  #change Date format
+  GAStech_edges <- GAStech_edges %>%
+  mutate(SendDate = dmy(SentDate)) %>%
+  mutate(Weekday = wday(SentDate,
+                        label = TRUE,
+                        abbr = FALSE))
+```
+
+## Wrangling attributes
+
+We group by 3 columns, summarize their weight But we want to exclude those source == target and we remove those only appear once. Ungroup is important to put the data back to ungroup format
+
+```{r}
+  GAStech_edges_aggregated <- GAStech_edges %>%
+  filter(MainSubject == "Work related") %>%
+  group_by(source, target, Weekday) %>%
+    summarise(Weight = n()) %>%
+  filter(source!=target) %>%
+  filter(Weight > 1) %>%
+  ungroup()
+```
+
+We need to tidy up the nodes and edges, to make sure they are in proper data frame format, before we put them into tbl_graph. The function below combine the two table into a graph object, as directed multigraph as we specified
+
+```{r construct data model for gragh}
+  GAStech_graph <- tbl_graph(nodes = GAStech_nodes,
+                           edges = GAStech_edges_aggregated, 
+                           directed = TRUE)
+  #To confirm we have structured a correct Graph:
+
+  GAStech_graph 
+```
+
+## visualiza the Graph data with ggraph
+
+### Plotting network plot
+
+#### raw network plot 1
+
+The code chunks below will be used to plot the network graph using Fruchterman and Reingold layout. However it looks messy and boring, we need to enhance it.
+
+```{r rawplot}
+  g <- ggraph(GAStech_graph, 
+              layout = "fr") +
+    geom_edge_link(aes()) +
+    geom_node_point(aes())
+  
+  g + theme_graph()
+```
+
+#### enhance with some colors
+
+change layout to nicely colour = Department,size = 3 will give th diagram some colors
+
+```{r}
+g <- ggraph(GAStech_graph, 
+            layout = "nicely") + 
+  geom_edge_link(aes()) +
+  geom_node_point(aes(colour = Department, 
+                      size = 3))
+
+g + theme_graph()
+```
+
+#### adjust the weights
+
+the thickness of the edges will be mapped with the Weight variable: aes(width=Weight), alpha=0.2 scale_edge_width(range = c(0.1, 5)) +
+
+```{r}
+  g <- ggraph(GAStech_graph, 
+              layout = "nicely") +
+    geom_edge_link(aes(width=Weight), 
+                   alpha=0.2) +
+    scale_edge_width(range = c(0.1, 5)) +
+    geom_node_point(aes(colour = Department), 
+                    size = 3)
+  
+  g + theme_graph()
+```
+
+### Creating facet_edges graphs
+
+similar to ggplot, ggraph is faceting enabled. In visualising network data, this technique can be used to reduce edge over-plotting in a very meaning way by spreading nodes and edges out based on their attributes. There are three functions in ggraph to implement faceting, they are:
+
+-   facet_nodes() whereby edges are only draw in a panel if both terminal nodes are present here,
+
+-   facet_edges() whereby nodes are always drawn in al panels even if the node data contains an attribute named the same as the one used for the edge facetting,
+
+-   and facet_graph() faceting on two variables simultaneously.
+
+example below added: - g + facet_edges(\~Weekday)
+
+```{r}
+  set_graph_style()
+
+  g <- ggraph(GAStech_graph, 
+              layout = "nicely") + 
+    geom_edge_link(aes(width=Weight), 
+                   alpha=0.2) +
+    scale_edge_width(range = c(0.1, 5)) +
+    geom_node_point(aes(colour = Department), 
+                    size = 2)
+  
+  g + facet_edges(~Weekday)
+```
+
+We can adjust the location of legend using:
+
+-   theme(legend.position = 'bottom')
+
+We can use the foreground setting to adjust and make table looks nicer - th_foreground(foreground = "grey80",\
+border = TRUE) +
+
+```{r}
+  set_graph_style() 
+  
+  g <- ggraph(GAStech_graph, 
+              layout = "nicely") + 
+    geom_edge_link(aes(width=Weight), 
+                   alpha=0.2) +
+    scale_edge_width(range = c(0.1, 5)) +
+    geom_node_point(aes(colour = Department), 
+                    size = 2)
+    
+  g + facet_edges(~Weekday) +
+    th_foreground(foreground = "grey80",  
+                  border = TRUE) +
+    theme(legend.position = 'bottom')
+```
+
+### creating facet_nodes graphs
+
+this will provide us a way to view based on specific type of nodes
+
+```{r}
+  set_graph_style()
+  
+  g <- ggraph(GAStech_graph, 
+              layout = "nicely") + 
+    geom_edge_link(aes(width=Weight), 
+                   alpha=0.2) +
+    scale_edge_width(range = c(0.1, 5)) +
+    geom_node_point(aes(colour = Department), 
+                    size = 2)
+    
+  g + facet_nodes(~Department)+
+    th_foreground(foreground = "grey80",  
+                  border = TRUE) +
+    theme(legend.position = 'bottom')
+```
+
+## Network Metrics Analysis
+
+### Calculating centrality values
+
+There are four well-known centrality measures, namely: degree, betweenness, closeness and eigenvector.
+
+By using `mutate(betweenness_centrality = centrality_betweenness()) %>%` we can calculate and use the centrality measure.
+
+mutate() of dplyr is used to perform the computation. the algorithm used, on the other hand, is the centrality_betweenness() of tidygraph.
+
+```{r}
+    g <- GAStech_graph %>%
+    mutate(betweenness_centrality = centrality_betweenness()) %>%
+    ggraph(layout = "fr") + 
+    geom_edge_link(aes(width=Weight), 
+                   alpha=0.2) +
+    scale_edge_width(range = c(0.1, 5)) +
+    geom_node_point(aes(colour = Department,
+              size=betweenness_centrality))
+  g + theme_graph()
+```
+
+Alternatively, we can use the centrality measures can be accessed directly in ggraph calls. This means that it is no longer necessary to precompute and store derived node and edge centrality measures on the graph in order to use them in a plot.
+
+e.g. size = centrality_betweenness()
+
+```{r}
+g <- GAStech_graph %>%
+  ggraph(layout = "fr") + 
+  geom_edge_link(aes(width=Weight), 
+                 alpha=0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department, 
+                      size = centrality_betweenness()))
+g + theme_graph()
+```
+
+## Visualising Community
+
+tidygraph package inherits many of the community detection algorithms imbedded into igraph and makes them available to us, including *Edge-betweenness (group_edge_betweenness)*, *Leading eigenvector (group_leading_eigen)*, *Fast-greedy (group_fast_greedy)*, *Louvain (group_louvain)*, *Walktrap (group_walktrap)*, *Label propagation (group_label_prop)*, *InfoMAP (group_infomap)*, *Spinglass (group_spinglass)*, and *Optimal (group_optimal)*. Some community algorithms are designed to take into account direction or weight, while others ignore it. Use this [link](https://tidygraph.data-imaginist.com/reference/group_graph.html) to find out more about community detection functions provided by tidygraph
+
+
+
+```{r}
+g <- GAStech_graph %>%
+  mutate(community = as.factor(group_edge_betweenness(weights = Weight, directed = TRUE))) %>%
+  ggraph(layout = "fr") + 
+  geom_edge_link(aes(width=Weight), 
+                 alpha=0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = community))  
+
+g + theme_graph()
+```

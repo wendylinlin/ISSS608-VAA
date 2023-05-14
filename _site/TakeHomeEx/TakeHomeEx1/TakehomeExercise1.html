@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lin Lin">
+<meta name="dcterms.date" content="2023-05-02">
+
+<title>ISSS608-VAA - Take home Exercise 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="../../site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="../../site_libs/plotly-binding-4.10.1/plotly.js"></script>
+<script src="../../site_libs/typedarray-0.1/typedarray.min.js"></script>
+<script src="../../site_libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="../../site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+<script src="../../site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="../../site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="../../site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">ISSS608-VAA</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Hands-on Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html">
+ <span class="dropdown-text">Hands-on Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html">
+ <span class="dropdown-text">Hands-on Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html">
+ <span class="dropdown-text">Hands-on Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03Part2.html">
+ <span class="dropdown-text">Hands-on Exercise 3 Part 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.qmd">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04Chpt10.html">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html">
+ <span class="dropdown-text">Hands-on Exercise 5</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-in-class-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">In Class Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-in-class-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../InClassEx/In-class_Ex01/In-class_Ex01.html">
+ <span class="dropdown-text">In Class Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../InClassEx/In-class_Ex03/In-class_Ex03.html">
+ <span class="dropdown-text">In Class Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../InClassEx/In-class_Ex04/In-class_Ex04.html">
+ <span class="dropdown-text">In Class Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../InClassEx/In-class_Ex05/In-class_Ex05.html">
+ <span class="dropdown-text">In Class Exercise 5</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Take Home Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../TakeHomeEx/TakeHomeEx1/TakehomeExercise1.html">
+ <span class="dropdown-text">Take Home Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../TakeHomeEx/TakeHomeEx2/TakehomeExercise2.qmd">
+ <span class="dropdown-text">Take Home Exercise 2</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-demographic-and-financial-characteristics-for-the-city-of-engagement" id="toc-the-demographic-and-financial-characteristics-for-the-city-of-engagement" class="nav-link active" data-scroll-target="#the-demographic-and-financial-characteristics-for-the-city-of-engagement"><strong>The demographic and financial characteristics for the city of Engagement</strong></a>
+  <ul class="collapse">
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">1. Background</a></li>
+  <li><a href="#load-understand-and-clean-data" id="toc-load-understand-and-clean-data" class="nav-link" data-scroll-target="#load-understand-and-clean-data">2. Load, understand and clean data</a>
+  <ul class="collapse">
+  <li><a href="#load-related-r-packages-and-load-data" id="toc-load-related-r-packages-and-load-data" class="nav-link" data-scroll-target="#load-related-r-packages-and-load-data">2.1. load related R packages and Load data:</a></li>
+  <li><a href="#compare-loaded-data-with-data-source-metadata" id="toc-compare-loaded-data-with-data-source-metadata" class="nav-link" data-scroll-target="#compare-loaded-data-with-data-source-metadata">2.2 Compare loaded data with data source metadata</a></li>
+  <li><a href="#converting-data-to-desired-format-using-tidyverse-according-to-meta-data" id="toc-converting-data-to-desired-format-using-tidyverse-according-to-meta-data" class="nav-link" data-scroll-target="#converting-data-to-desired-format-using-tidyverse-according-to-meta-data">2.3 Converting data to desired format using tidyverse according to meta data:</a></li>
+  <li><a href="#checking-data-quality" id="toc-checking-data-quality" class="nav-link" data-scroll-target="#checking-data-quality">2.4 checking data quality</a></li>
+  </ul></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">3.Exploratory Data Analysis</a>
+  <ul class="collapse">
+  <li><a href="#about-the-population" id="toc-about-the-population" class="nav-link" data-scroll-target="#about-the-population">3.1 About the population</a></li>
+  </ul></li>
+  <li><a href="#todo" id="toc-todo" class="nav-link" data-scroll-target="#todo">TODO</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Take home Exercise 1</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lin Lin </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 2, 2023</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">May 14, 2023</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<section id="the-demographic-and-financial-characteristics-for-the-city-of-engagement" class="level1">
+<h1><strong>The demographic and financial characteristics for the city of Engagement</strong></h1>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">1. Background</h2>
+<p>City of Engagement, with a <strong>total population of 50,000</strong>, is a <strong>small city</strong> located at Country of Nowhere. The city serves as a <strong>service centre of an agriculture region</strong> surrounding the city. The main agriculture of the region is fruit farms and vineyards. The local council of the city is in the process of preparing the Local Plan 2023. A sample survey of 1000 representative residents had been conducted to collect data <strong>related to their household demographic and spending patterns,</strong> among other things. The city aims to use the data to assist with their major community revitalization efforts, including how to <strong>allocate a very large city renewal grant they have recently received.</strong></p>
+<p>Here we will use static and interactive data analytics to help to reveal any data patterns found.</p>
+</section>
+<section id="load-understand-and-clean-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-understand-and-clean-data">2. Load, understand and clean data</h2>
+<section id="load-related-r-packages-and-load-data" class="level3">
+<h3 class="anchored" data-anchor-id="load-related-r-packages-and-load-data">2.1. load related R packages and Load data:</h3>
+<p>Package used:</p>
+<ul>
+<li><p><strong><code>tidyverse</code></strong>: tidyverse is a collection of R packages that work together to provide a consistent and efficient way to work with data.</p>
+<ul>
+<li>It includes packages such as <strong>dplyr</strong> for data manipulation, <strong>tidyr</strong> for data tidying, and <strong>ggplot2</strong> for data visualization. Tidyverse emphasizes a “tidy data” philosophy, which involves organizing data in a standardized format that facilitates analysis and visualization.</li>
+</ul></li>
+<li><p><strong><code>plotly</code></strong>: plotly, R library for plotting interactive statistical graphs.</p></li>
+<li><p><strong><code>gganimate</code></strong>:, an ggplot extension for creating animated statistical graphs.</p></li>
+<li><p><strong><code>ggstatsplot</code></strong>: ggstatsplot is an R package that combines ggplot2 visualizations with statistical tests. It offers a set of functions that can be used to produce plots with accompanying statistical results. The package aims to simplify the process of creating complex visualizations while providing informative statistical output.</p></li>
+<li><p><strong><code>raincloudplots</code>:</strong> This package is tailored towards easy visualization of grouped and repeated measures data. Moreover, it also provides individually linked repeated measures visualizations, which add detail and richness to a multitude of within-subject designs.</p></li>
+</ul>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>    <span class="co">#| warning: false</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">#| echo: false</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse,dplyr, ggplot2, plotly,gganimate,ggstatsplot, ggdist, patchwork ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Load data from data files then inspect the data format</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| echo: false</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#import data from csv file and check the format</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  Participants <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/Participants.csv"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(Participants)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  participantId householdSize haveKids   age educationLevel      interestGroup
+          &lt;dbl&gt;         &lt;dbl&gt; &lt;lgl&gt;    &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;        
+1             0             3 TRUE        36 HighSchoolOrCollege H            
+2             1             3 TRUE        25 HighSchoolOrCollege B            
+3             2             3 TRUE        35 HighSchoolOrCollege A            
+4             3             3 TRUE        21 HighSchoolOrCollege I            
+5             4             3 TRUE        43 Bachelors           H            
+6             5             3 TRUE        32 HighSchoolOrCollege D            
+# ℹ 1 more variable: joviality &lt;dbl&gt;</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  FinancialJournal <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/FinancialJournal.csv"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(FinancialJournal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  participantId timestamp           category  amount
+          &lt;dbl&gt; &lt;dttm&gt;              &lt;chr&gt;      &lt;dbl&gt;
+1             0 2022-03-01 00:00:00 Wage      2473. 
+2             0 2022-03-01 00:00:00 Shelter   -555. 
+3             0 2022-03-01 00:00:00 Education  -38.0
+4             1 2022-03-01 00:00:00 Wage      2047. 
+5             1 2022-03-01 00:00:00 Shelter   -555. 
+6             1 2022-03-01 00:00:00 Education  -38.0</code></pre>
+</div>
+</div>
+</section>
+<section id="compare-loaded-data-with-data-source-metadata" class="level3">
+<h3 class="anchored" data-anchor-id="compare-loaded-data-with-data-source-metadata">2.2 Compare loaded data with data source metadata</h3>
+<p>We have 2 data sources: Participants.csv and FinancialJournal.csv and below are what we know about them:</p>
+<ul>
+<li><p>Participants.csv Contains information about the residents of City of Engagement that have agreed to participate in this study.</p>
+<ul>
+<li><p>participantId (integer): unique ID assigned to each participant.</p></li>
+<li><p>householdSize (integer): the number of people in the participant’s household</p></li>
+<li><p>haveKids (boolean): whether there are children living in the participant’s household.</p></li>
+<li><p>age (integer): participant’s age in years at the start of the study.</p></li>
+<li><p>educationLevel (string factor): the participant’s education level, one of: {“Low”, “HighSchoolOrCollege”, “Bachelors”, “Graduate”} <u>(use tidyverse to convert to factor with fix sequence)</u></p></li>
+<li><p>interestGroup (char): a char representing the participant’s stated primary interest group, one of {“A”, “B”, “C”, “D”, “E”, “F”, “G”, “H”, “I”, “J”}. Note: specific topics of interest have been redacted to avoid bias.</p></li>
+<li><p>joviality (float): a value ranging from [0,1] indicating the participant’s overall happiness level at the start of the study. <strong>0 is very unhappy and 1 is very happy.</strong></p></li>
+</ul></li>
+<li><p>FinancialJournal.csv Contains information about financial transactions.</p>
+<ul>
+<li><p>participantId (integer): unique ID corresponding to the participant affected</p></li>
+<li><p>timestamp (datetime): the time when the check-in was logged.</p></li>
+<li><p>category (string factor): a string describing the expense category, one of {“Education”, “Food”, “Recreation”, “RentAdjustment”, “Shelter”, “Wage”}</p></li>
+<li><p>amount (double): the amount of the transaction</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="converting-data-to-desired-format-using-tidyverse-according-to-meta-data" class="level3">
+<h3 class="anchored" data-anchor-id="converting-data-to-desired-format-using-tidyverse-according-to-meta-data">2.3 Converting data to desired format using tidyverse according to meta data:</h3>
+<p>With the initial loaded data, some format is different from what is described in meta data. e.g.&nbsp;householdSize, joviality,amount are <dbl>. So convert them to the desired format using code below.</dbl></p>
+<p>Convert categorical data with fixed sequence as factor, such as education level, financial journal category etc.</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-fold: true</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-summary: "Show code"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert for all Participants columns:</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert participantId to integer</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  Participants<span class="sc">$</span>participantId <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(Participants<span class="sc">$</span>participantId)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert householdSize to integer</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  Participants<span class="sc">$</span>householdSize <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(Participants<span class="sc">$</span>householdSize)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert haveKids to boolean</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  Participants<span class="sc">$</span>haveKids <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(Participants<span class="sc">$</span>haveKids)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert age to integer</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  Participants<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(Participants<span class="sc">$</span>age)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert educationLevel to factor with fixed sequence, define by levels</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  Participants<span class="sc">$</span>educationLevel <span class="ot">&lt;-</span> <span class="fu">factor</span>(Participants<span class="sc">$</span>educationLevel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Low"</span>, <span class="st">"HighSchoolOrCollege"</span>, <span class="st">"Bachelors"</span>, <span class="st">"Graduate"</span>))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert interestGroup to character</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  Participants<span class="sc">$</span>interestGroup <span class="ot">&lt;-</span> <span class="fu">as.character</span>(Participants<span class="sc">$</span>interestGroup)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert joviality to numeric</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  Participants<span class="sc">$</span>joviality <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(Participants<span class="sc">$</span>joviality)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a> <span class="co">#| code-fold: true</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a> <span class="co">#| code-summary: "Show code"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert participantId to integer</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  FinancialJournal<span class="sc">$</span>participantId <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(FinancialJournal<span class="sc">$</span>participantId)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert timestamp column to POSIXct format</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  FinancialJournal<span class="sc">$</span>timestamp <span class="ot">&lt;-</span> <span class="fu">as.POSIXct</span>(FinancialJournal<span class="sc">$</span>timestamp)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert category to factor with fixed sequence</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  FinancialJournal<span class="sc">$</span>category <span class="ot">&lt;-</span> <span class="fu">factor</span>(FinancialJournal<span class="sc">$</span>category, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Education"</span>, <span class="st">"Food"</span>, <span class="st">"Recreation"</span>, <span class="st">"RentAdjustment"</span>, <span class="st">"Shelter"</span>, <span class="st">"Wage"</span>))</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert amount to numeric</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  FinancialJournal<span class="sc">$</span>amount <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(FinancialJournal<span class="sc">$</span>amount)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format timestamp to only keep date information</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  FinancialJournal<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(FinancialJournal<span class="sc">$</span>timestamp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="checking-data-quality" class="level3">
+<h3 class="anchored" data-anchor-id="checking-data-quality">2.4 checking data quality</h3>
+<p>Check for missing values in Participants.csv, from the output value we know there’s no missing data.</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| warning: false</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">any</span>(<span class="fu">is.na</span>(Participants))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#do a summary of Participants:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(Participants)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> participantId    householdSize    haveKids            age       
+ Min.   :   0.0   Min.   :1.000   Mode :logical   Min.   :18.00  
+ 1st Qu.: 252.5   1st Qu.:1.000   FALSE:710       1st Qu.:29.00  
+ Median : 505.0   Median :2.000   TRUE :301       Median :39.00  
+ Mean   : 505.0   Mean   :1.964                   Mean   :39.07  
+ 3rd Qu.: 757.5   3rd Qu.:3.000                   3rd Qu.:50.00  
+ Max.   :1010.0   Max.   :3.000                   Max.   :60.00  
+             educationLevel interestGroup        joviality       
+ Low                : 84    Length:1011        Min.   :0.000204  
+ HighSchoolOrCollege:525    Class :character   1st Qu.:0.240074  
+ Bachelors          :232    Mode  :character   Median :0.477539  
+ Graduate           :170                       Mean   :0.493794  
+                                               3rd Qu.:0.746819  
+                                               Max.   :0.999234  </code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Remove duplicate rows based on all columns:</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  Participants <span class="sc">%&gt;%</span> <span class="fu">distinct</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,011 × 7
+   participantId householdSize haveKids   age educationLevel      interestGroup
+           &lt;int&gt;         &lt;int&gt; &lt;lgl&gt;    &lt;int&gt; &lt;fct&gt;               &lt;chr&gt;        
+ 1             0             3 TRUE        36 HighSchoolOrCollege H            
+ 2             1             3 TRUE        25 HighSchoolOrCollege B            
+ 3             2             3 TRUE        35 HighSchoolOrCollege A            
+ 4             3             3 TRUE        21 HighSchoolOrCollege I            
+ 5             4             3 TRUE        43 Bachelors           H            
+ 6             5             3 TRUE        32 HighSchoolOrCollege D            
+ 7             6             3 TRUE        26 HighSchoolOrCollege I            
+ 8             7             3 TRUE        27 Bachelors           A            
+ 9             8             3 TRUE        20 Bachelors           G            
+10             9             3 TRUE        35 Bachelors           D            
+# ℹ 1,001 more rows
+# ℹ 1 more variable: joviality &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>From the output, we can confirm there’s no missing or duplicate data in Participants dataset. And data distribution is all according to described in meta data.</p>
+<p>Do the same checkings for FinancialJournal</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| warning: false</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check for missing values in FinancialJournal.csv</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">any</span>(<span class="fu">is.na</span>(FinancialJournal))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check timestamp range</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(FinancialJournal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> participantId      timestamp                                category     
+ Min.   :   0.0   Min.   :2022-03-01 00:00:00.00   Education     :  3319  
+ 1st Qu.: 222.0   1st Qu.:2022-05-24 13:25:00.00   Food          :790051  
+ Median : 464.0   Median :2022-08-25 15:00:00.00   Recreation    :296013  
+ Mean   : 480.9   Mean   :2022-08-26 05:00:48.42   RentAdjustment:   131  
+ 3rd Qu.: 726.0   3rd Qu.:2022-11-27 07:25:00.00   Shelter       : 11463  
+ Max.   :1010.0   Max.   :2023-02-28 23:55:00.00   Wage          :412659  
+     amount               date           
+ Min.   :-1562.726   Min.   :2022-03-01  
+ 1st Qu.:   -5.594   1st Qu.:2022-05-24  
+ Median :   -4.000   Median :2022-08-25  
+ Mean   :   20.047   Mean   :2022-08-25  
+ 3rd Qu.:   21.598   3rd Qu.:2022-11-27  
+ Max.   : 4096.526   Max.   :2023-02-28  </code></pre>
+</div>
+</div>
+<p>There’s no missing data in FinancialJournal dataset. But there seems some duplicate records in FinancialJournal. Proceed to remove duplicates using distinct() function:</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#display duplicate count for each row</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#FinancialJournal %&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#add_count(participantId,timestamp, category, amount) %&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#filter(n&gt;1) %&gt;%</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#distinct()</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  FinancialJournal <span class="sc">%&gt;%</span> <span class="fu">distinct</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,512,523 × 5
+   participantId timestamp           category  amount date      
+           &lt;int&gt; &lt;dttm&gt;              &lt;fct&gt;      &lt;dbl&gt; &lt;date&gt;    
+ 1             0 2022-03-01 00:00:00 Wage      2473.  2022-03-01
+ 2             0 2022-03-01 00:00:00 Shelter   -555.  2022-03-01
+ 3             0 2022-03-01 00:00:00 Education  -38.0 2022-03-01
+ 4             1 2022-03-01 00:00:00 Wage      2047.  2022-03-01
+ 5             1 2022-03-01 00:00:00 Shelter   -555.  2022-03-01
+ 6             1 2022-03-01 00:00:00 Education  -38.0 2022-03-01
+ 7             2 2022-03-01 00:00:00 Wage      2437.  2022-03-01
+ 8             2 2022-03-01 00:00:00 Shelter   -557.  2022-03-01
+ 9             2 2022-03-01 00:00:00 Education  -12.8 2022-03-01
+10             3 2022-03-01 00:00:00 Wage      2367.  2022-03-01
+# ℹ 1,512,513 more rows</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="exploratory-data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis">3.Exploratory Data Analysis</h2>
+<p>Plotting of diagrams in this exercise is mainly based on Grammar of Graphics, using the following layering concept:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://r4va.netlify.app/chap01/img/image4.jpg" class="img-fluid figure-img" width="404"></p>
+</figure>
+</div>
+<ul>
+<li><p><strong>Data</strong>: The dataset being plotted.</p></li>
+<li><p><strong>Aesthetics</strong> take attributes of the data and use them to influence visual characteristics, such as position, colours, size, shape, or transparency.</p></li>
+<li><p><strong>Geometrics</strong>: The visual elements used for our data, such as point, bar or line.</p></li>
+<li><p><strong>Facets</strong> split the data into subsets to create multiple variations of the same graph (paneling, multiple plots).</p></li>
+<li><p><strong>Statistics</strong>, statiscal transformations that summarise data (e.g.&nbsp;mean, confidence intervals).</p></li>
+<li><p><strong>Coordinate systems</strong> define the plane on which data are mapped on the graphic.</p></li>
+<li><p><strong>Themes</strong> modify all non-data components of a plot, such as main title, sub-title, y-aixs title, or legend background.</p></li>
+</ul>
+<section id="about-the-population" class="level3">
+<h3 class="anchored" data-anchor-id="about-the-population">3.1 About the population</h3>
+<p>We first want to understand how is the overall happiness level - Joviality distributed. By plotting Joviality with histogram we know how is the distribution of Joviality spread among the participants. Detailed example for usage of layering concept:</p>
+<ul>
+<li><p><strong>Data</strong>: Use Participant data, focus on Joviality score</p></li>
+<li><p><strong>Aesthetics</strong> In terms of Joviality scores, we explore how are people’s joviality level spread between 0 to 1.</p></li>
+<li><p><strong>Geometrics</strong>: Choose to use histogram, Use 10 bins so the step is 0.1 per bin and we know the count in each value range. To view the count of bin, fill the bins with different gradient of blue based on the count (light blue to dark blue). It is achieved by setting the fill argument to the count variable and using the scale_fill_gradient function to create a gradient color scale.</p>
+<ul>
+<li>Using labs() function, x and y arguments are used to set the x and y axis labels respectively, title argument is used to set the plot title, and caption argument is used to add the label below the plot to explain value of joviality.</li>
+</ul></li>
+<li><p><strong>Statistics</strong>, Using stat_bin to allow statistics value of count value to be displayed on top of each bins, so value is visible.</p></li>
+<li><p><strong>Coordinate systems</strong>: Adjusting the display by setting x and y axis range and steps with the Joviality data range and count value range</p></li>
+<li><p><strong>Themes</strong>: use theme minimal</p></li>
+</ul>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>    <span class="co">#| warning: false</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="at">data=</span>Participants, <span class="fu">aes</span>(<span class="at">x =</span> joviality, <span class="at">fill =</span> <span class="fu">after_stat</span>(count))) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">10</span>, <span class="at">color=</span><span class="st">"grey"</span>) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_gradient</span>(<span class="at">low=</span><span class="st">"lightblue"</span>, <span class="at">high=</span><span class="st">"darkblue"</span>) <span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"Distribution of Joviality scores"</span>) <span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Joviality"</span>, <span class="at">y =</span> <span class="st">"Frequency of participants in range"</span>, <span class="at">title =</span> <span class="st">"Distribution of Joviality scores"</span>, <span class="at">caption =</span> <span class="st">"0: very unhappy, 1: very happy"</span>) <span class="sc">+</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_bin</span>(<span class="at">bins=</span><span class="dv">10</span>,<span class="fu">aes</span>(<span class="at">label=</span><span class="fu">after_stat</span>(count)), <span class="at">geom=</span><span class="st">"text"</span>, <span class="at">vjust=</span><span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">150</span>))<span class="sc">+</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/JovialityHistogram-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Next we explore if there’s any difference between different categorical attributes (Household Size, Education level, have Kids, Interest Group etc) with their Joviality value using violin chart.</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-fold: true</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-summary: "Show code"</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_ly</span>(<span class="at">data =</span> Participants,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="sc">~</span>educationLevel,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="sc">~</span>joviality,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">line =</span> <span class="fu">list</span>(<span class="at">width =</span><span class="fl">0.5</span>),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">"violin"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">opacity =</span> <span class="fl">0.5</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">line =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="dv">1</span>)),</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">box =</span> <span class="fu">list</span>(<span class="at">visible =</span> T),</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">meanline =</span> <span class="fu">list</span>(<span class="at">visible =</span> T, <span class="at">color =</span> <span class="st">"rgb(250, 220, 0)"</span>))  <span class="sc">|&gt;</span> </span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Generating plot and y-axis title  </span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout</span>(<span class="at">title =</span> <span class="st">"Distribution of joviality by selected factors"</span>,</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Category selected"</span>),</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Joviality Rating"</span>),</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>   <span class="co">#creating dropwdown menus to allow selection of parameters on x-axis </span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>   <span class="at">updatemenus =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">type =</span> <span class="st">'dropdown'</span>,</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>                           <span class="at">xref =</span> <span class="st">"paper"</span>,</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>                           <span class="at">yref =</span> <span class="st">"paper"</span>,</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>                           <span class="at">xanchor =</span> <span class="st">"left"</span>,</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>                           <span class="at">x =</span> <span class="fl">0.04</span>, </span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>                           <span class="at">y =</span> <span class="fl">0.95</span>,</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>                           <span class="at">buttons =</span> <span class="fu">list</span>(</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>                             </span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"update"</span>,</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">args =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">x =</span> <span class="fu">list</span>(Participants<span class="sc">$</span>educationLevel)),</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">list</span>(<span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">categoryorder =</span> <span class="st">"category ascending"</span>))),</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">label =</span> <span class="st">"Education Level"</span>),</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"update"</span>,</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">args =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">x =</span> <span class="fu">list</span>(Participants<span class="sc">$</span>householdSize)),</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">list</span>(<span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">categoryorder =</span> <span class="st">"category ascending"</span>))),</span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">label =</span> <span class="st">"Household Size"</span>),</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"update"</span>,</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">args =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">x =</span> <span class="fu">list</span>(Participants<span class="sc">$</span>haveKids)),</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">list</span>(<span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">categoryorder =</span> <span class="st">"category ascending"</span>))),</span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">label =</span> <span class="st">"Have Kids"</span>),</span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"update"</span>,</span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">args =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">x =</span> <span class="fu">list</span>(Participants<span class="sc">$</span>interestGroup)),</span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">list</span>(<span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">categoryorder =</span> <span class="st">"category ascending"</span>))),</span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">label =</span> <span class="st">"Interest Group"</span>)</span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a>                            </span>
+<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a>                             )</span>
+<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a>                           )</span>
+<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>                      )</span>
+<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a>   )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-0480de071577af6684e9" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-0480de071577af6684e9">{"x":{"visdat":{"56c43262502a":["function () ","plotlyVisDat"]},"cur_data":"56c43262502a","attrs":{"56c43262502a":{"x":{},"y":{},"line":{"width":0.5},"marker":{"opacity":0.5,"line":{"width":1}},"box":{"visible":true},"meanline":{"visible":true,"color":"rgb(250, 220, 0)"},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"violin"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Distribution of joviality by selected factors","xaxis":{"domain":[0,1],"automargin":true,"title":"Category selected","type":"category","categoryorder":"array","categoryarray":["Low","HighSchoolOrCollege","Bachelors","Graduate"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Joviality Rating"},"updatemenus":[{"type":"dropdown","xref":"paper","yref":"paper","xanchor":"left","x":0.04,"y":0.95,"buttons":[{"method":"update","args":[{"x":[["HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","Graduate","Bachelors","HighSchoolOrCollege","Low","HighSchoolOrCollege","Low","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Low","Low","Graduate","HighSchoolOrCollege","Low","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","Graduate","HighSchoolOrCollege","Graduate","Graduate","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Graduate","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Low","Graduate","Graduate","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Low","Bachelors","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Graduate","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Graduate","Low","Graduate","Low","Low","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Low","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","HighSchoolOrCollege","Low","Bachelors","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Low","Bachelors","Graduate","Graduate","Bachelors","Bachelors","Bachelors","Graduate","Graduate","Graduate","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Low","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","Low","Low","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","Graduate","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","Bachelors","Graduate","Graduate","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Low","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","Graduate","Bachelors","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","Bachelors","Low","Low","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","Low","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","Graduate","Low","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Low","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Bachelors","Graduate","Graduate","Bachelors","HighSchoolOrCollege","Graduate","Low","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","Low","Bachelors","Low","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Graduate","Graduate","Bachelors","Bachelors","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","Low","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Low","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Low","Low","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Bachelors","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","Graduate","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Bachelors","Bachelors","Graduate","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","Graduate","Graduate","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","Bachelors","Graduate","Bachelors","Bachelors","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Low","Bachelors","Bachelors","Bachelors","Bachelors","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Graduate","Bachelors","Graduate","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Low","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","Low","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Low","HighSchoolOrCollege"]]},{"xaxis":{"categoryorder":"category ascending"}}],"label":"Education Level"},{"method":"update","args":[{"x":[[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]},{"xaxis":{"categoryorder":"category ascending"}}],"label":"Household Size"},{"method":"update","args":[{"x":[[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]]},{"xaxis":{"categoryorder":"category ascending"}}],"label":"Have Kids"},{"method":"update","args":[{"x":[["H","B","A","I","H","D","I","A","G","D","D","F","D","J","H","I","J","I","I","B","I","E","E","B","D","J","F","D","A","C","C","F","C","D","B","J","G","G","D","G","I","F","J","E","C","E","D","C","F","D","H","G","B","H","I","J","G","A","J","C","D","F","A","G","I","I","J","C","G","B","D","J","B","H","B","A","I","C","B","C","E","D","H","C","J","A","C","A","A","J","E","E","J","B","C","H","B","J","B","H","F","A","A","J","F","J","A","C","C","C","D","B","C","G","G","J","E","F","C","B","E","F","A","B","I","E","A","E","G","B","J","H","I","I","D","E","A","C","H","C","I","B","F","A","I","F","J","J","A","A","H","G","I","A","J","A","J","J","J","G","F","A","B","D","F","G","A","F","G","J","G","I","I","C","D","I","J","E","E","F","H","E","C","F","G","G","C","B","D","E","H","G","I","D","A","B","I","C","H","A","H","A","A","J","C","I","D","B","E","C","A","F","D","I","C","A","C","F","B","I","F","I","G","F","G","E","I","H","J","G","D","A","C","A","C","G","I","C","A","I","J","I","H","H","I","C","B","B","H","G","E","D","D","G","D","H","F","D","G","J","B","H","F","A","H","D","F","G","G","F","E","D","F","B","G","F","A","E","B","A","J","C","B","D","B","A","E","E","C","E","A","E","B","F","G","F","H","D","G","I","H","J","A","F","H","C","I","H","F","E","H","D","A","I","H","B","H","G","F","B","G","F","I","B","C","I","F","C","H","J","G","G","H","G","J","H","G","B","H","H","E","G","E","C","D","E","J","D","A","B","I","E","C","E","C","J","C","B","F","H","H","F","D","G","J","G","H","B","D","I","J","E","A","B","F","D","F","G","C","F","C","A","H","J","G","F","H","G","A","J","J","G","J","G","A","G","G","H","I","J","F","J","J","J","I","D","H","A","H","H","B","I","A","D","G","I","G","G","E","A","G","A","D","I","D","E","G","H","G","H","C","E","G","G","A","C","J","G","D","I","H","C","J","F","H","B","B","G","E","H","A","G","J","H","B","F","H","F","A","J","J","D","H","F","C","J","I","C","J","H","J","J","E","B","I","E","C","B","D","A","B","B","I","J","B","F","G","I","F","A","D","B","I","I","E","H","F","D","B","I","C","E","F","A","C","F","E","G","F","C","G","C","F","H","E","H","A","I","A","E","H","I","E","D","C","D","H","F","C","D","A","D","B","E","F","H","J","D","C","C","C","D","D","D","G","B","H","J","H","F","J","D","E","A","C","J","B","D","I","A","D","A","J","I","G","C","C","G","C","C","C","D","J","I","J","D","D","G","E","F","G","J","D","J","H","D","B","F","I","I","A","H","A","A","F","C","F","I","H","G","C","E","C","E","E","D","H","I","B","H","G","J","J","E","H","H","J","A","E","E","A","H","J","B","C","G","D","H","J","I","G","G","J","H","G","J","A","F","I","H","D","E","D","A","A","E","I","A","B","A","C","E","B","J","C","F","F","B","D","H","D","H","H","D","H","G","J","F","H","B","F","C","I","I","F","A","J","A","D","F","C","G","B","G","C","A","C","G","J","G","C","D","C","B","J","H","H","A","C","A","I","G","J","F","C","E","I","F","J","G","F","D","C","D","C","D","H","G","E","F","C","I","E","E","B","A","A","J","H","H","A","B","A","J","H","F","B","F","G","I","A","C","I","C","G","J","G","A","E","G","G","E","E","J","A","C","C","I","C","I","H","H","C","F","C","E","F","J","G","D","G","J","A","E","J","J","D","D","J","G","H","J","J","B","D","I","B","H","A","I","D","G","D","I","B","A","F","J","I","E","I","I","J","B","A","I","B","F","E","B","C","D","F","F","F","F","G","J","F","C","E","H","B","A","E","H","J","G","A","B","G","H","G","D","F","D","A","F","E","G","E","G","H","H","H","G","J","H","B","I","C","D","F","H","B","A","J","H","J","B","D","H","H","F","I","F","I","H","I","I","F","I","C","J","F","B","F","J","J","A","J","C","G","A","A","E","I","C","B","A","G","G","H","F","D","A","B","B","J","B","D","F","E","G","B","J","E","F","I","I","D","C","H","J","D","B","D","G","A","C","J","G","A","E","H","J","A","D","G","E","F","I","J","D","B","D","F","C","F","J","D","J","I","H","B","A","J","J","E","A","H","E","B","G","F","A","F","H","H","F","I","F","H","G","I","E","F","A","J","A","E","G","H","D","C","B","J","E","D","C","H","F","J","G","I","E","I","B","H","F","E","C","F","I","J","C","J","I","H","F","B","C","G","F","B","F","J","B","C","B","D"]]},{"xaxis":{"categoryorder":"category ascending"}}],"label":"Interest Group"}]}],"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(31,119,180,0.5)","x":["HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","Graduate","Bachelors","HighSchoolOrCollege","Low","HighSchoolOrCollege","Low","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Low","Low","Graduate","HighSchoolOrCollege","Low","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","Graduate","HighSchoolOrCollege","Graduate","Graduate","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Graduate","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Low","Graduate","Graduate","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Low","Bachelors","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Graduate","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Graduate","Low","Graduate","Low","Low","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Low","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","HighSchoolOrCollege","Low","Bachelors","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Low","Bachelors","Graduate","Graduate","Bachelors","Bachelors","Bachelors","Graduate","Graduate","Graduate","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Low","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","Low","Low","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","Graduate","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","Bachelors","Graduate","Graduate","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Low","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","Graduate","Bachelors","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","Bachelors","Low","Low","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","Low","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","Graduate","Low","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Low","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Bachelors","Graduate","Graduate","Bachelors","HighSchoolOrCollege","Graduate","Low","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","Low","Bachelors","Low","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Graduate","Graduate","Bachelors","Bachelors","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","Low","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","Low","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","Graduate","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Low","Low","HighSchoolOrCollege","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Low","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Low","Bachelors","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Low","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","Graduate","HighSchoolOrCollege","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Bachelors","Bachelors","Graduate","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","Graduate","Graduate","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","Bachelors","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Graduate","Bachelors","Graduate","Bachelors","Bachelors","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Low","Bachelors","Bachelors","Bachelors","Bachelors","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Graduate","Bachelors","Graduate","Graduate","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","Low","Graduate","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","Graduate","Low","HighSchoolOrCollege","Bachelors","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Low","Bachelors","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Bachelors","Bachelors","Graduate","Graduate","HighSchoolOrCollege","HighSchoolOrCollege","HighSchoolOrCollege","Bachelors","HighSchoolOrCollege","HighSchoolOrCollege","Graduate","Low","HighSchoolOrCollege"],"y":[0.001626703,0.3280865,0.39346959,0.138063446,0.857396691,0.772957791,0.833980668,0.958189409,0.697554819,0.467131409,0.557176006,0.25422732,0.241615182,0.724503834,0.930003289,0.232266068,0.392189088,0.114667399,0.32696558,0.486470164,0.619057739,0.931240975,0.663815663,0.260211811,0.607328128,0.520535752,0.549177225,0.135148815,0.230073813,0.607853294,0.681423545,0.23266675,0.189498641,0.094585958,0.767112453,0.707950782,0.348019484,0.174975799,0.215116214,0.862950926,0.880410054,0.863663966,0.055283617,0.045228735,0.976499153,0.179657824,0.225049088,0.424159724,0.485827661,0.229589642,0.576174771,0.374354513,0.730126771,0.140697641,0.778504463,0.770806686,0.734056857,0.422849796,0.192945633,0.186308253,0.411129251,0.598278749,0.491406814,0.583943591,0.330606159,0.498178653,0.773765426,0.438788793,0.519538618,0.743901318,0.72544679,0.947066909,0.218744284,0.381370977,0.904601349,0.791342831,0.362917704,0.621716267,0.188638917,0.03403389,0.40138993,0.871320255,0.955760648,0.027148207,0.455102277,0.354510651,0.399201318,0.725176476,0.746921002,0.169054036,0.139818869,0.733204092,0.467868166,0.580101654,0.413830119,0.451218504,0.504845427,0.679506778,0.366630644,0.39686665,0.142686163,0.020504586,0.265501227,0.194724115,0.991414933,0.851915894,0.700811306,0.357131296,0.098903572,0.290464519,0.313305546,0.720330648,0.646977694,0.999233967,0.413490065,0.57753282,0.30282788,0.760663448,0.140611532,0.612907872,0.876546337,0.41537229,0.159723746,0.118152103,0.14336634,0.150075471,0.72895287,0.882038681,0.718790546,0.371183768,0.524660325,0.802929522,0.540291283,0.551268581,0.247000174,0.86081073,0.555650922,0.87301128,0.732757238,0.846097713,0.216307476,0.792161061,0.789243454,0.107753878,0.444080663,0.882253016,0.643761923,0.528698226,0.266938991,0.80654106,0.20807405,0.159854965,0.6089739,0.758079342,0.954706293,0.176618296,0.466716971,0.254005742,0.468930899,0.24297235,0.168095803,0.965708743,0.936659644,0.225309113,0.812453062,0.964990249,0.627739055,0.846680285,0.365595636,0.364391587,0.133248852,0.114389766,0.575001936,0.78521373,0.718049535,0.481863571,0.931237599,0.495453274,0.725246226,0.900831449,0.100777319,0.787497465,0.839659224,0.109940826,0.95269116,0.270514436,0.89222241,0.207533138,0.730336584,0.216100876,0.61053033,0.447070968,0.262612842,0.976160413,0.162966636,0.058702708,0.360151845,0.901982488,0.321634269,0.379086335,0.122095522,0.203183443,0.985936814,0.939180121,0.271944209,0.194899452,0.365692745,0.814611008,0.371925591,0.25635218,0.857673439,0.214486332,0.748988452,0.961066785,0.300610569,0.089838002,0.153900625,0.948411855,0.971074532,0.955659284,0.79251329,0.727868507,0.617025806,0.700821194,0.28441375,0.004829228,0.965943386,0.490213553,0.168680628,0.68602034,0.004466007,0.902213545,0.96685839,0.263283426,0.332411556,0.936585851,0.10774033,0.110877355,0.256101892,0.795405195,0.641752748,0.088547964,0.113248116,0.662515201,0.969991586,0.859058201,0.968768651,0.867500339,0.287889236,0.842954238,0.627740735,0.386580333,0.564718074,0.560328176,0.17968177,0.852187763,0.807211251,0.405851044,0.951577316,0.19286307,0.33366576,0.465652496,0.664033926,0.223825175,0.106440071,0.048044295,0.972629863,0.798810236,0.041170737,0.36077235,0.173976665,0.331893543,0.669281126,0.874083512,0.79265137,0.173802734,0.107405002,0.836787725,0.259541618,0.811965348,0.102762652,0.478284265,0.109360456,0.880967299,0.754293139,0.897884327,0.476984055,0.599616007,0.910143395,0.955240694,0.271552097,0.370084679,0.686374918,0.126082302,0.847052228,0.439355556,0.548350934,0.057905387,0.852555697,0.5149016,0.21434781,0.873371058,0.254585434,0.543218407,0.183595892,0.84325552,0.260386143,0.962210067,0.172405182,0.125682773,0.061286668,0.699020662,0.260798961,0.093271632,0.633335142,0.287666416,0.175386489,0.494087429,0.473772081,0.253614379,0.477539156,0.842877969,0.650831243,0.757226712,0.122182828,0.480441948,0.654885921,0.228872071,0.346047608,0.085267909,0.7738118,0.417763616,0.323175901,0.299174844,0.103185768,0.328727521,0.600454813,0.108965479,0.713809975,0.21098913,0.034283769,0.227355255,0.584828154,0.029688855,0.025541228,0.464569175,0.70462894,0.270904553,0.573738776,0.51011746,0.517999111,0.269322751,0.788841177,0.34088384,0.21035075,0.735837586,0.686094014,0.536520661,0.969014671,0.757990018,0.41088011,0.299050559,0.753234813,0.404476978,0.253379525,0.438986616,0.138808298,0.13664462,0.039923482,0.139040705,0.70247421,0.371688755,0.986983183,0.979407864,0.85417223,0.184734538,0.141162784,0.035335186,0.991810222,0.061959185,0.690118062,0.621188126,0.964579432,0.694582993,0.949906952,0.569018722,0.479804894,0.401545108,0.687759804,0.596117189,0.76530714,0.140477262,0.848830989,0.909124868,0.52722067,0.675097131,0.364809779,0.396967817,0.963462391,0.082643442,0.512379139,0.264710804,0.674497947,0.884407261,0.230962551,0.617829242,0.801609951,0.686077576,0.794096009,0.645271398,0.175733331,0.507728111,0.662852559,0.106292289,0.171319189,0.128459971,0.370202736,0.695894652,0.976850716,0.622118277,0.085672033,0.517662469,0.647441392,0.132465984,0.723576465,0.334417031,0.469702696,0.916735753,0.09631243,0.059265966,0.949453894,0.420302416,0.981851015,0.000985,0.618031654,0.725281643,0.949412047,0.450502705,0.63736647,0.930702522,0.049076886,0.800759302,0.523649971,0.758121962,0.048951659,0.496667064,0.154285175,0.689153128,0.924288993,0.392066569,0.504323829,0.164418633,0.742684694,0.811967182,0.249578287,0.158418515,0.685091778,0.151671229,0.312528351,0.344762529,0.969102133,0.302215803,0.773790326,0.353252364,0.923037343,0.329111154,0.191165293,0.586290946,0.45189519,0.554244414,0.679944615,0.039582663,0.941687305,0.614071428,0.088574034,0.237641609,0.094335508,0.383485068,0.495874155,0.753570226,0.211241597,0.563457797,0.012329643,0.209746249,0.936547208,0.24042683,0.02038719,0.471347147,0.770104322,0.107608661,0.008404856,0.843920569,0.364100624,0.641308283,0.149860389,0.478280008,0.145298865,0.906250776,0.653874654,0.494442294,0.239743189,0.895202266,0.597042481,0.892482505,0.108711953,0.466477753,0.602514117,0.293051648,0.87972655,0.705961036,0.716063608,0.173537994,0.66240327,0.306487271,0.896797286,0.41490899,0.369711957,0.460451549,0.379599106,0.974802854,0.154725513,0.477456741,0.277699434,0.80318727,0.262933648,0.01017311,0.703025703,0.543392106,0.008329855,0.568405413,0.585489943,0.134122197,0.303479796,0.504013735,0.298257944,0.428775106,0.137689076,0.969868254,0.617029061,0.449809053,0.820897579,0.778143316,0.149424876,0.557004306,0.574526753,0.632529807,0.061282494,0.065619544,0.061410383,0.211903193,0.420901962,0.492572167,0.057542458,0.100871333,0.551760119,0.604777434,0.626384882,0.540412762,0.805252435,0.684335696,0.240288209,0.24858955,0.329193948,0.970166283,0.842958885,0.906449778,0.401423701,0.865316562,0.812872098,0.650812395,0.539205582,0.36821258,0.681954474,0.978406157,0.856878184,0.83712939,0.968722072,0.93659165,0.98284777,0.768714853,0.66433137,0.417992624,0.468741471,0.568154176,0.130737765,0.265413241,0.008705951,0.444743825,0.412038273,0.975273877,0.448569158,0.263048698,0.22126511,0.919710751,0.278112333,0.739359987,0.967555161,0.408345757,0.171959185,0.998644049,0.791591163,0.585843678,0.853874668,0.751229979,0.875113575,0.705971019,0.370138058,0.370246957,0.358497175,0.213011118,0.526105544,0.734927742,0.034839253,0.541632245,0.059062573,0.79664861,0.544782269,0.965741735,0.089915241,0.025245948,0.673541165,0.738766851,0.719188185,0.576129491,0.916163673,0.604580267,0.793880506,0.26189132,0.84035204,0.38852626,0.653881117,0.217949026,0.243164359,0.227976736,0.915889403,0.447001762,0.104168464,0.573248725,0.221999544,0.527164931,0.686982312,0.396350271,0.261732596,0.619875624,0.130781968,0.134078822,0.962520694,0.665589674,0.634994302,0.042960665,0.846974117,0.047571871,0.665307968,0.39520838,0.872069831,0.380975259,0.315950154,0.71872952,0.675085656,0.741834688,0.354910317,0.056860736,0.038611164,0.937254935,0.270124892,0.172855291,0.328627654,0.037996177,0.59491202,0.183180758,0.39578961,0.270624129,0.470322266,0.051798314,0.543992757,0.545251458,0.068612756,0.137446199,0.90601112,0.980481087,0.141341978,0.440943662,0.392351739,0.241410497,0.411069142,0.599260494,0.786524128,0.954361914,0.434048369,0.42355875,0.467859308,0.609420425,0.560883015,0.402956862,0.391601344,0.54286479,0.452363587,0.976239224,0.674877675,0.055989127,0.907301342,0.440877016,0.288396985,0.609793327,0.746716458,0.692283941,0.404529522,0.275811473,0.570765537,0.100837923,0.324954076,0.942801579,0.325503058,0.11885355,0.905015948,0.373642689,0.132319548,0.318139199,0.839634412,0.960391982,0.930475595,0.232407811,0.634111119,0.315916767,0.241785645,0.624709649,0.502901494,0.945430646,0.037220396,0.465075787,0.748473896,0.619208795,0.240042805,0.298490597,0.522010625,0.063256748,0.130649539,0.933937799,0.879171582,0.68222841,0.409040073,0.187180439,0.091096884,0.077442954,0.447644949,0.10382656,0.588102942,0.066469676,0.874661744,0.017790641,0.262320121,0.77217008,0.736149674,0.339503386,0.17565975,0.414137953,0.933334008,0.797833033,0.000204,0.880468848,0.751787305,0.7844507,0.815990235,0.338259596,0.12564865,0.740682908,0.573952621,0.268937352,0.808558886,0.289569911,0.623466515,0.24609694,0.806871224,0.546776461,0.854523316,0.453217413,0.321067111,0.112504967,0.449689991,0.193751151,0.442987521,0.1411042,0.834580963,0.377309384,0.517238511,0.747594455,0.001365799,0.14514474,0.415138085,0.839157196,0.706306798,0.865257446,0.972081828,0.695900691,0.818566502,0.517422334,0.430036143,0.665923892,0.96008167,0.992601749,0.027591944,0.490190335,0.493231932,0.217382928,0.468583888,0.328587955,0.437718862,0.033479552,0.8452362,0.457280127,0.144875993,0.030335914,0.619525261,0.539387528,0.44174758,0.521630433,0.206406844,0.501048865,0.758474429,0.283066289,0.065357535,0.053564289,0.202769644,0.269842118,0.904248183,0.780884351,0.610736625,0.97254096,0.813680504,0.280151127,0.152431791,0.60769828,0.249719036,0.139770688,0.408977137,0.957400017,0.201801545,0.048428984,0.221489156,0.980908737,0.469113963,0.655361489,0.636640992,0.683850663,0.659909909,0.234712133,0.247843267,0.948917655,0.633519504,0.828259584,0.631431974,0.677712189,0.30005276,0.42856627,0.042899175,0.547588054,0.370060753,0.853049624,0.87924161,0.7135266,0.839802108,0.332054621,0.997604884,0.807449064,0.416211045,0.115098336,0.997670843,0.709526793,0.38081745,0.495487226,0.820903516,0.067887485,0.928387676,0.282834314,0.891019925,0.535316197,0.289402134,0.573668238,0.337456142,0.353813394,0.021946709,0.889292896,0.20389365,0.020957045,0.384062608,0.280787048,0.550077037,0.983190272,0.643407835,0.126644557,0.875200368,0.554827306,0.03022743,0.540411016,0.550025961,0.628664697,0.692154335,0.385248792,0.486920328,0.544405537,0.89356989,0.480241663,0.063125207,0.210131243,0.161994033,0.533005979,0.930669564,0.632828416,0.598767089,0.014316555,0.652990074,0.303588097,0.933377794,0.000265,0.405713393,0.992351674,0.784906863,0.431612119,0.230593991,0.283020728,0.96153717,0.931029947,0.046984156,0.8563378,0.275547256,0.132602239,0.185717667,0.093249599,0.445184451,0.777990984,0.203002706,0.88226691,0.522667054,0.097293702,0.536881382,0.441937538,0.235105787,0.240105908,0.679262409,0.880292697,0.807027625,0.840828509,0.715480626,0.449546034,0.660069967,0.819895146,0.010975349,0.116646459,0.880591759,0.380395715,0.131920315,0.932155545,0.148548085,0.846871205,0.556397418,0.305318637,0.217082066,0.549042649,0.301470597,0.349445327,0.570251922,0.91308015,0.890386981,0.132914203,0.455351665,0.258533986,0.119913514,0.950638773,0.982251017,0.172802708,0.129766383,0.159548434,0.360847428,0.274541862,0.345104613,0.086367063,0.077140899,0.502257508,0.398379338,0.357706459,0.548974082,0.458594873,0.098639485,0.21831518,0.969600048,0.198499294,0.301652515,0.182773504,0.315707809,0.659934449,0.833977506,0.970492609,0.280018247,0.905125735,0.932521377,0.444802157,0.572648773,0.128853966,0.335018383,0.254432893,0.983012498,0.043433461,0.323610205,0.336785107,0.070626542,0.356881322,0.639268458,0.934347783,0.163721028,0.828330134,0.17538799],"line":{"color":"rgba(31,119,180,1)","width":0.5},"marker":{"color":"rgba(31,119,180,1)","opacity":0.5,"line":{"color":"rgba(31,119,180,1)","width":1}},"box":{"visible":true},"meanline":{"visible":true,"color":"rgb(250, 220, 0)"},"type":"violin","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(patchwork)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  mean_joviality_edu <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(educationLevel) <span class="sc">%&gt;%</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_joviality =</span> <span class="fu">mean</span>(joviality)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_joviality))</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  mean_joviality_edu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  educationLevel      mean_joviality
+  &lt;fct&gt;                        &lt;dbl&gt;
+1 Graduate                     0.516
+2 Bachelors                    0.498
+3 Low                          0.487
+4 HighSchoolOrCollege          0.486</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Visualizing the uncertainty of point estimates: ggdist methods</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  pedu <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> joviality, </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">y =</span> educationLevel)) <span class="sc">+</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_gradientinterval</span>(   </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"skyblue"</span>,      </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">TRUE</span>     </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span>                        </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Visualising confidence intervals of mean joviality score with different education level"</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Gradient + interval plot"</span>)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  pedu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mean_joviality_edu | pedu</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  mean_joviality_house <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(householdSize) <span class="sc">%&gt;%</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_joviality =</span> <span class="fu">mean</span>(joviality))<span class="sc">%&gt;%</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_joviality))</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  mean_joviality_house</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  householdSize mean_joviality
+          &lt;int&gt;          &lt;dbl&gt;
+1             3          0.500
+2             2          0.498
+3             1          0.484</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>  phouse <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> joviality, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">y =</span> householdSize)) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_gradientinterval</span>(   </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"skyblue"</span>,      </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">TRUE</span>     </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span>                        </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Visualising confidence intervals of mean joviality score with different household Size"</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Gradient + interval plot"</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  phouse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>  mean_joviality_kids <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(haveKids) <span class="sc">%&gt;%</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_joviality =</span> <span class="fu">mean</span>(joviality))<span class="sc">%&gt;%</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_joviality))</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  mean_joviality_kids</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  haveKids mean_joviality
+  &lt;lgl&gt;             &lt;dbl&gt;
+1 TRUE              0.500
+2 FALSE             0.491</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>  pkids <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> joviality, </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">y =</span> haveKids)) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_gradientinterval</span>(   </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"skyblue"</span>,      </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">TRUE</span>     </span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span>                        </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Visualising confidence intervals of mean joviality score with different household Size"</span>,</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Gradient + interval plot"</span>)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  pkids</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/unnamed-chunk-3-3.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>  mean_joviality_interest <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(interestGroup) <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_joviality =</span> <span class="fu">mean</span>(joviality))<span class="sc">%&gt;%</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_joviality))</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  mean_joviality_interest</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   interestGroup mean_joviality
+   &lt;chr&gt;                  &lt;dbl&gt;
+ 1 E                      0.529
+ 2 C                      0.520
+ 3 G                      0.513
+ 4 I                      0.503
+ 5 F                      0.501
+ 6 J                      0.491
+ 7 B                      0.488
+ 8 D                      0.477
+ 9 A                      0.472
+10 H                      0.451</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>  pinterest <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> joviality, </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">y =</span> pinterest)) <span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_gradientinterval</span>(   </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"skyblue"</span>,      </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">TRUE</span>     </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span>                        </span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Visualising confidence intervals of mean joviality score with different household Size"</span>,</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Gradient + interval plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="data-insights" class="level4">
+<h4 class="anchored" data-anchor-id="data-insights">Data insights</h4>
+<p>By visually inspect the data, with different categories may have different median value for joviality. By looking at mean/median value together, it looks like:</p>
+<ul>
+<li>people with Graduate education level has highest joviality</li>
+<li>Household with size of 3 has highest joviality</li>
+<li>People has kids has higher joviality than people without kids</li>
+<li>People with interest group ECG has higher joviality than others</li>
+</ul>
+<p>To test our hypothesis above, we will do some statistical test. The null hypothesis will be the characterists displayed between different sample based on different category is only because of sampling randomness. For hasKids, it’s True or False, we will use T test. For other categorical values such as educationLevel,householdSize,interestGroup, they have 2 or more than 2 categories, we will use ANOVA test. First is to test if</p>
+<p>The data doesn’t look as normally distributed based on violin chart, hence we use Kruskal - Wallis test. The Kruskal-Wallis test is a non-parametric test, which does not assume that the data is normally distributed or that the variances are equal. It tests whether there is a significant difference in medians of the groups.</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| warning: false</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#plotting violin plot across regions</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggbetweenstats</span>(<span class="at">data =</span> Participants, <span class="at">x =</span> educationLevel, <span class="at">y =</span> joviality,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Education Level"</span>, <span class="at">ylab =</span> <span class="st">"Joviality Value"</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type =</span> <span class="st">"np"</span>, <span class="at">pairwise.comparisons =</span> T, <span class="at">pairwise.display =</span> <span class="st">"ns"</span>, </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mean.ci =</span> T, <span class="at">p.adjust.method =</span> <span class="st">"fdr"</span>,  <span class="at">conf.level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">title =</span> <span class="st">"Comparison of Median Joviality across different Education Level"</span>,</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">package =</span> <span class="st">"ggthemes"</span>, <span class="at">palette =</span> <span class="st">"Tableau_10"</span>) <span class="sc">+</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/statsTest-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Subset data to keep only necessary columns</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  Joviality_Education <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(joviality, educationLevel)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rename the education level categories</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  Joviality_Education<span class="sc">$</span>educationLevel <span class="ot">&lt;-</span> <span class="fu">recode</span>(Joviality_Education<span class="sc">$</span>educationLevel,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"None"</span> <span class="ot">=</span> <span class="st">"No Formal Education"</span>,</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"Primary"</span> <span class="ot">=</span> <span class="st">"Primary Education"</span>,</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"Secondary"</span> <span class="ot">=</span> <span class="st">"Secondary Education"</span>,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"Tertiary"</span> <span class="ot">=</span> <span class="st">"Tertiary Education"</span>)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Plot the violin plot</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> Joviality_Education, <span class="fu">aes</span>(<span class="at">x =</span> educationLevel, <span class="at">y =</span> joviality)) <span class="sc">+</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_violin</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>, <span class="at">fill =</span> <span class="st">"grey80"</span>) <span class="sc">+</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"Distribution of Joviality scores across Education levels"</span>) <span class="sc">+</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Education Level"</span>, <span class="at">y =</span> <span class="st">"Joviality Score"</span>) <span class="sc">+</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/statsTest-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="about-the-population---family-related-analysis-family-size-presence-of-kids" class="level4">
+<h4 class="anchored" data-anchor-id="about-the-population---family-related-analysis-family-size-presence-of-kids">3.1.2 About the population - Family related analysis (Family size, presence of kids)</h4>
+<p>Next, we can explore how many Unique Participants are there in the population? And among the Participants, how many have/do not have kids?</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#library(dplyr)</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># count the number of unique participant IDs</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  TotalParticipantCount <span class="ot">&lt;-</span> Participants <span class="sc">%&gt;%</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(participantId) <span class="sc">%&gt;%</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>()</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  TotalParticipantCount</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+      n
+  &lt;int&gt;
+1  1011</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># count the number of Participants with and without kids</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>Participants <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(haveKids) <span class="sc">%&gt;%</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> count <span class="sc">/</span> <span class="fu">sum</span>(count) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">haveKids =</span> <span class="fu">ifelse</span>(haveKids, <span class="st">"Yes"</span>, <span class="st">"No"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> haveKids, <span class="at">y =</span> count, <span class="at">fill =</span> haveKids)) <span class="sc">+</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Have Kids?"</span>, <span class="at">y =</span> <span class="st">"Participants Count"</span>, <span class="at">title =</span> <span class="st">"Distribution of Participants with/without kids"</span>,<span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Total Participants: "</span>, TotalParticipantCount<span class="sc">$</span>n)) <span class="sc">+</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(count, <span class="st">" ("</span>, <span class="fu">round</span>(percent, <span class="dv">2</span>), <span class="st">"%)"</span>)), <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Number of Participants with and without kids"</span>) <span class="sc">+</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#999999"</span>, <span class="st">"#78C850"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)) <span class="sc">+</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="todo" class="level2">
+<h2 class="anchored" data-anchor-id="todo">TODO</h2>
+<p>To understand if education level affects having kids, we can perform a chi-squared test for independence. This test will help us determine if there is a significant association between the two categorical variables (education level and have kids). The output of the chi-squared test will give us a p-value. If the p-value is less than the significance level (usually 0.05), we can reject the null hypothesis and conclude that there is a significant association between education level and having kids. The null hypothesis in this test is that the two variables are independent, meaning that there is no association between them. the contingency table shows the frequency count of Participants’ education level and whether they have kids or not. The chi-squared test has been performed to determine whether there is a significant association between education level and having kids.</p>
+<p>The result shows that the chi-squared statistic is 12.481 with 3 degrees of freedom, and the p-value is 0.005905. The p-value is less than the conventional alpha level of 0.05, which means that we reject the null hypothesis of independence and conclude that there is a significant association between education level and having kids.</p>
+<p>As for the best visualization to plot, we can use a stacked bar chart to show the proportion of participants with and without kids for each education level. Here is an example R code to create a stacked bar chart:</p>
+<p>#TODO TRY RAINCLOUDPLOTS library(raincloudplots)</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a contingency table</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>cont_table <span class="ot">&lt;-</span> <span class="fu">table</span>(Participants<span class="sc">$</span>educationLevel, Participants<span class="sc">$</span>haveKids)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform chi-squared test</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(cont_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test
+
+data:  cont_table
+X-squared = 12.481, df = 3, p-value = 0.005905</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the required library</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a stacked bar chart</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Participants, <span class="fu">aes</span>(<span class="at">x =</span> educationLevel, <span class="at">fill =</span> haveKids)) <span class="sc">+</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"stack"</span>) <span class="sc">+</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Education level vs. Having kids"</span>, <span class="at">x =</span> <span class="st">"Education level"</span>, <span class="at">y =</span> <span class="st">"Count"</span>, <span class="at">fill =</span> <span class="st">"Have kids"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Use histogram to visualize the distribution of household sizes:</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">library</span>(ggplot2)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a histogram of household sizes</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(Participants, <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">colour =</span> haveKids)) <span class="sc">+</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<section id="about-the-financials" class="level4">
+<h4 class="anchored" data-anchor-id="about-the-financials">3.1.3 About the Financials</h4>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data=</span>FinancialJournal, </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span> category,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> amount)) <span class="sc">+</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">color=</span><span class="st">"red"</span>, <span class="at">fill=</span><span class="st">"orange"</span>, <span class="at">alpha=</span><span class="fl">0.2</span>) <span class="sc">+</span>                    </span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>, </span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">1</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="TakehomeExercise1_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group by, spread</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

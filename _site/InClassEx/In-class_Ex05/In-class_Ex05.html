@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Lin Lin">
+<meta name="author" content="LIN LIN">
 
-<title>ISSS608-VAA - Hands-on_Ex04Chpt10</title>
+<title>ISSS608-VAA - In-Class_Ex05</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -237,24 +237,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#visualizing-the-uncertainty-of-point-estimates" id="toc-visualizing-the-uncertainty-of-point-estimates" class="nav-link active" data-scroll-target="#visualizing-the-uncertainty-of-point-estimates">Visualizing the uncertainty of point estimates</a>
-  <ul class="collapse">
-  <li><a href="#visualizing-the-uncertainty-of-point-estimates-ggplot2-methods" id="toc-visualizing-the-uncertainty-of-point-estimates-ggplot2-methods" class="nav-link" data-scroll-target="#visualizing-the-uncertainty-of-point-estimates-ggplot2-methods">Visualizing the uncertainty of point estimates: ggplot2 methods</a></li>
-  <li><a href="#visualizing-the-uncertainty-of-point-estimates-ggplot2-methods-1" id="toc-visualizing-the-uncertainty-of-point-estimates-ggplot2-methods-1" class="nav-link" data-scroll-target="#visualizing-the-uncertainty-of-point-estimates-ggplot2-methods-1">Visualizing the uncertainty of point estimates: ggplot2 methods</a></li>
-  </ul></li>
-  </ul>
-</nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Hands-on_Ex04Chpt10</h1>
+<h1 class="title">In-Class_Ex05</h1>
 </div>
 
 
@@ -264,140 +254,86 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Lin Lin </p>
+             <p>LIN LIN </p>
           </div>
   </div>
     
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">May 13, 2023</p>
+    </div>
+  </div>
     
   </div>
   
 
 </header>
 
-<section id="visualizing-the-uncertainty-of-point-estimates" class="level2">
-<h2 class="anchored" data-anchor-id="visualizing-the-uncertainty-of-point-estimates">Visualizing the uncertainty of point estimates</h2>
-<ul>
-<li><p>A point estimate is a single number, such as a mean.</p></li>
-<li><p>Uncertainty is expressed as standard error, confidence interval, or credible interval</p></li>
-<li><p>Important:</p></li>
-<li><p>Don’t confuse the uncertainty of a point estimate with the variation in the sample</p></li>
-</ul>
+<ol type="1">
+<li>Preparing with Graph Data 1.1 Data source checking and organization</li>
+</ol>
+<p>You should always have source and target in the data file, shift and put them as the first 2 columns, source first, target second. <img src="Source Destination.JPG" class="img-fluid" width="463"></p>
+<p>1.2</p>
+<p>We need a node mapping file, the ID must be the same as the source and target from the first file. And for the label, it’s there which map the exact label of the nodes to shorten it in case it’s required. Remember to to input all data value, such as (“No data”, “unknown” etc to replace the empty value there.) <img src="Labeling of source and target.JPG" class="img-fluid"></p>
+<ol start="2" type="1">
+<li>Import data</li>
+</ol>
 <div class="cell">
+<details>
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>    <span class="co">#| warning: false</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, plotly, crosstalk, DT, ggdist, gganimate)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>exam <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/Exam_data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">#| echo: false</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse,dplyr, ggplot2) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| warning: false</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| echo: false</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  GAStech_nodes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/GAStech_email_node.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stderr">
-<pre><code>Rows: 322 Columns: 7
+<pre><code>Rows: 54 Columns: 4
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-chr (4): ID, CLASS, GENDER, RACE
-dbl (3): ENGLISH, MATHS, SCIENCE
+chr (3): label, Department, Title
+dbl (1): id
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  GAStech_edges <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/GAStech_email_edge-v2.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 9063 Columns: 8
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (5): SentDate, Subject, MainSubject, sourceLabel, targetLabel
+dbl  (2): source, target
+time (1): SentTime
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
 </div>
-<section id="visualizing-the-uncertainty-of-point-estimates-ggplot2-methods" class="level3">
-<h3 class="anchored" data-anchor-id="visualizing-the-uncertainty-of-point-estimates-ggplot2-methods">Visualizing the uncertainty of point estimates: ggplot2 methods</h3>
-<ul>
-<li><p>group the observation by RACE,</p></li>
-<li><p>computes the count of observations, mean, standard deviation and standard error of Maths by RACE, and</p></li>
-<li><p>save the output as a tibble data table called <code>my_sum</code>.</p></li>
-</ul>
+<p>Check through data, there’s format issue. Conver the format:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    <span class="co">#| warning: false</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  my_sum <span class="ot">&lt;-</span> exam <span class="sc">%&gt;%</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(RACE) <span class="sc">%&gt;%</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">n=</span><span class="fu">n</span>(),</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">mean=</span><span class="fu">mean</span>(MATHS),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">sd=</span><span class="fu">sd</span>(MATHS)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">se=</span>sd<span class="sc">/</span><span class="fu">sqrt</span>(n<span class="dv">-1</span>))</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(my_sum), <span class="at">format =</span> <span class="st">'html'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> RACE </th>
-   <th style="text-align:right;"> n </th>
-   <th style="text-align:right;"> mean </th>
-   <th style="text-align:right;"> sd </th>
-   <th style="text-align:right;"> se </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> Chinese </td>
-   <td style="text-align:right;"> 193 </td>
-   <td style="text-align:right;"> 76.50777 </td>
-   <td style="text-align:right;"> 15.69040 </td>
-   <td style="text-align:right;"> 1.132357 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Indian </td>
-   <td style="text-align:right;"> 12 </td>
-   <td style="text-align:right;"> 60.66667 </td>
-   <td style="text-align:right;"> 23.35237 </td>
-   <td style="text-align:right;"> 7.041005 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Malay </td>
-   <td style="text-align:right;"> 108 </td>
-   <td style="text-align:right;"> 57.44444 </td>
-   <td style="text-align:right;"> 21.13478 </td>
-   <td style="text-align:right;"> 2.043177 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Others </td>
-   <td style="text-align:right;"> 9 </td>
-   <td style="text-align:right;"> 69.66667 </td>
-   <td style="text-align:right;"> 10.72381 </td>
-   <td style="text-align:right;"> 3.791438 </td>
-  </tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</section>
-<section id="visualizing-the-uncertainty-of-point-estimates-ggplot2-methods-1" class="level3">
-<h3 class="anchored" data-anchor-id="visualizing-the-uncertainty-of-point-estimates-ggplot2-methods-1">Visualizing the uncertainty of point estimates: ggplot2 methods</h3>
-<p>below is how reveal the standard error of mean maths score by race.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(my_sum) <span class="sc">+</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>RACE, </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymin=</span>mean<span class="sc">-</span>se, </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymax=</span>mean<span class="sc">+</span>se), </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">width=</span><span class="fl">0.2</span>, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour=</span><span class="st">"black"</span>, </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha=</span><span class="fl">0.9</span>, </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(aes</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>           (<span class="at">x=</span>RACE, </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>mean), </span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>           <span class="at">stat=</span><span class="st">"identity"</span>, </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>           <span class="at">color=</span><span class="st">"red"</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">size =</span> <span class="fl">1.5</span>,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha=</span><span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Standard error of mean </span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="st">          maths score by rac"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-ℹ Please use `linewidth` instead.</code></pre>
-</div>
-<div class="cell-output-display">
-<p><img src="Hands-on_Ex04Chpt10_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
-</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  GAStech_edges <span class="ot">&lt;-</span> GAStech_edges <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SendDate =</span> <span class="fu">dmy</span>(SentDate)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Weekday =</span> <span class="fu">wday</span>(SentDate,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">label =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">abbr =</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

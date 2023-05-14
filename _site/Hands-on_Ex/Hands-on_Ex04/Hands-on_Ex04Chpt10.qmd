@@ -1,4 +1,0 @@
----
-title: "Hands-on_Ex04Chpt10"
-author: "Lin Lin"
----

@@ -1,0 +1,44 @@
+---
+title: "In-Class_Ex05"
+author: "LIN LIN"
+date-modified: "`r Sys.Date()`"
+format:
+  html: 
+    code-fold: true
+    code-summary: "Show the code"
+---
+
+1.  Preparing with Graph Data 1.1 Data source checking and organization
+
+You should always have source and target in the data file, shift and put them as the first 2 columns, source first, target second. ![](Source%20Destination.JPG){width="463"}
+
+1.2
+
+We need a node mapping file, the ID must be the same as the source and target from the first file. And for the label, it's there which map the exact label of the nodes to shorten it in case it's required. Remember to to input all data value, such as ("No data", "unknown" etc to replace the empty value there.) ![](Labeling%20of%20source%20and%20target.JPG)
+
+2.  Import data
+
+```{r loadlibrary}
+    #| warning: false
+    #| echo: false
+  pacman::p_load(tidyverse,dplyr, ggplot2) 
+```
+
+```{r loaddata}
+  #| warning: false
+  #| echo: false
+  GAStech_nodes <- read_csv("data/GAStech_email_node.csv")
+  GAStech_edges <- read_csv("data/GAStech_email_edge-v2.csv")
+```
+
+Check through data, there's format issue. Conver the format:
+
+```{r convert format}
+  GAStech_edges <- GAStech_edges %>%
+  mutate(SendDate = dmy(SentDate)) %>%
+  mutate(Weekday = wday(SentDate,
+                        label = TRUE,
+                        abbr = FALSE))
+```
+
+

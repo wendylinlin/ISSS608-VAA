@@ -1,0 +1,29 @@
+---
+title: "TakehomEx2"
+author: "LIN LIN"
+---
+
+
+```{r loadLibraries}
+  pacman::p_load(jsonlite,tidygraph, ggraph, visNetwork, tidyverse)
+```
+
+If we already have jsonlite, we don't need it anymore
+```{r loadData}
+  MC1<- jsonlite::fromJSON("data/MC1.json")
+```
+
+After checking MC1, the data is a list and it's not a proper structure known by igraph, telegraph etc. We need to pull out the nodes and links out from the MC1.
+We picked the desired fields and reorganized the columns using select function.
+```{r }
+  MC1_nodes <- as.tibble(MC1$nodes) %>% 
+  select(id, type, country) 
+
+  MC1_edges <- as.tibble(MC1$links) %>% 
+  select (source, target, type, weight, key)
+  
+```
+
+```{r}
+  MC2<- fromJSON("data/mc2_challenge_graph.json")
+```
