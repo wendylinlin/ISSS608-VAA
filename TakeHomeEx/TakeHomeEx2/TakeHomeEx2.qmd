@@ -1,6 +1,14 @@
 ---
 title: "TakehomEx2"
 author: "LIN LIN"
+date-modified: "`r Sys.Date()`"
+format:
+  html: 
+    code-fold: true
+    code-summary: "Show the code"
+execute:
+  warning: false
+editor: visual
 ---
 
 # Problem Statement
@@ -9,198 +17,1047 @@ Seafood is a highly traded commodity globally, with **over a third** of the worl
 
 FishEye International, a nonpartisan NGO, aims to understand the factors driving illegal fishing. They have collected data over the years to gain insights into this issue. FishEye International is getting help to **assist them in interpreting the conflicting data** and eventually making recommendations on how to address illegal fishing and its broader impacts.
 
-## Goal of this file: Contextualize Data
+## Goal: identify companies possibly engaged in illegal, unreported, and unregulated (IUU) fishing
 
-FishEye has collects online news articles about fishing, marine industry, and international maritime trade. To facilitate their analysis, FishEye uses a natural language processing tool to **extract the names of entities (people and businesses) and the relationships between them.** We will focus on the following 4 entities:
+FishEye received data import/export data from the country of Oceanus marine and fishing industry. However the data is incomplete. A knowledge graph has been constructed to resolve this problem, with node-link diagram for high level overview. There are 4 challenge goals posted in [VAST Challenge - Mini Challenge 2](https://vast-challenge.github.io/2023/MC2.html). This document is addressing sub-challenge question 1.
 
-**Entities to investigate**
+The goal is to use visualization to provide more details about entities in the knowledge graph, with the following 2 main parts of analysis:
 
-1.  Mar de la Vida OJSC
+1.  **Understand business relationship patterns between entities** Use visual analytics to check and identify patterns and different type of business relationship from the knowledge graph, identify the patterns between entities.
 
-2.  979893388
+2.  **Observe Pattern of fishing company interaction with temporal analysis:**
 
-3.  Oceanfront Oasis Inc Carrie
+Companies caught fishing illegally will shut down but start up again under a different name. Temporal pattern analysis is required, to compare activities of companies over time to determine if companies have returned to their nefarious acts.
 
-4.  8327
+## Data Pre-processing
 
-## Data Preprocessing
-
-Load the library and read the json relationship file MC1.
+First, load the library and read the json relationship file MC2.
 
 ```{r loadData}
   #Load Libraries
-  pacman::p_load(jsonlite,tidygraph, ggraph, visNetwork, tidyverse)
+  pacman::p_load(jsonlite,tidygraph, ggraph, visNetwork, tidyverse, shiny, plotly, ggtern)
 
   #load Data
   #If we already have jsonlite, we don't need it anymore
-  MC1<- jsonlite::fromJSON("data/MC1.json")
-```
-
-After checking MC1, the data is a found to be in a list and it's not stored in proper structure in R for Graph objects, such as igraph, tidygraph etc. We need to pull out the nodes and links out from the MC1 and **store them in R Graph Objects.**
-
-By visual inspection of raw data, MC1 Nodes and Links both contain "dataset" column with only "MC1" as value, they can be eliminated.
-
-We picked the desired fields and reorganized the columns **using select function.**
-
-```{r }
-  MC1_nodes <- as.tibble(MC1$nodes) %>% 
-  select(id, type, country) 
-
-  MC1_edges <- as.tibble(MC1$links) %>% 
-  select (source, target, type, weight, key)
-  
-```
-
-```{r}
   MC2<- fromJSON("data/mc2_challenge_graph.json")
 ```
 
+After checking MC2, the data is a found to be in a list and it's not stored in proper structure in R for Graph objects, such as igraph, tidygraph etc. We need to pull out the nodes and links out from the MC2 and **store them in R Graph Objects.** By visual inspection of raw data, MC2 Nodes and Links both contain "dataset" column with only "MC2" as value, they can be eliminated.
+
+We picked the desired fields and reorganized the columns **using select function.**
+
+```{r selectColumns}
+  MC2_nodes <- as.tibble(MC2$nodes) %>%
+  select(id, shpcountry, rcvcountry)
+
+  MC2_edges <- as.tibble(MC2$links) %>%
+  mutate(ArrivalDate = ymd(arrivaldate)) %>%
+  mutate(Year = year(ArrivalDate)) %>%
+  select (source,target,arrivaldate,hscode,valueofgoods_omu,volumeteu,weightkg,valueofgoodsusd) %>%
+  distinct()
+
+```
+
+There are total 34,576 Rows loaded for MC2_nodes; total 5,309,087 distinct rows loaded for MC2_edges.
+
 ### Cleaning data for nodes
+
+Here we inspect the raw data loaded, check the unique values and NA values in the data
 
 ```{r inspectNodeData}
   #| code-fold: true
   #| code-summary: "Show code"
  
     #to check data table
-    head(MC1_nodes, n = 30)
-
+    print("MC2 nodes，this is the data structure:")
+    head(MC2_nodes, n = 30)
     # Check summary statistics of the data
-    summary(MC1_nodes)
+    summary(MC2_nodes)
     
     # Count the number of unique IDs
-    unique_id_count <- MC1_nodes %>%
+    unique_id_count <- MC2_nodes %>%
     distinct(id) %>%
     nrow()
-    unique_id_count # this is 3417 smaller than 3428, it means there are duplicate fields to remove
-    
+    cat("There are ", unique_id_count ," of unique IDs in the node") # this is 34576 nodes
     
     # Count the number of non-NA values in each column
-    colSums(is.na(MC1_nodes))
-    
-    # Check unique values in the "type" column
-    unique(MC1_nodes$type)
-
+    print("There are some NA values")
+    colSums(is.na(MC2_nodes))
     # Check unique values in the "country" column
-    length(unique(MC1_nodes$country))
+    cat ("Among all the countires, there are ", length(unique(MC2_nodes$shpcountry)), "number of unique shipping countries and there are ", length(unique(MC2_nodes$rcvcountry)), " number of unique receiving countries" )
+
     
+
 ```
 
-[**Issues found:**]{.underline}
+[**Discussion:**]{.underline}
 
-1.  The unique_id_count (3417) is smaller than raw row count (3428), there are duplicate ids in the dataset. We will **need to remove duplicate id**.
-2.  There's **no NA row for ids**, however **for country or for type, there are NA values.** And in some cases there's only id and **both country and type value are missing**. We will remove these data as a id value itself alone doesn't provide much information.
-3.  There are at least **118 distinct countries possible**, however the country values are not in the same format. Some are fictitious name such as "Nalakond, Rio Isla" which can't be found in real world, while the rest of them is a country with sequence number such as "Country_271835".
-4.  In this study, we want to focus on **names of entities (people and businesses) and the relationships between them**, so for other type we may remove them.
+1.  There's **no NA row for ids**, however **for shpcountry** (country associated when shipping) **and rcvcountry** （country associated when receiving)
 
-+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
-| Type Issue                                                                                                                                           | Example                                                                |
-+======================================================================================================================================================+========================================================================+
-| **type "movement"** doesn't relate to people and business, we can remove.                                                                            | ![movement example](images/movement.JPG){width="167"}                  |
-+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
-| In MC_edges file, where there'**s corresponding ids under movement type** should be removed as well, as the relationship mapping doesn't make sense. | ![](images/type%20affected.JPG){width="379"}                           |
-|                                                                                                                                                      |                                                                        |
-| For example, **months** appear in target field, these rows should be analyasis.                                                                      |                                                                        |
-+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
-| Type "**Event**" doesn't relate to people and business. We can remove them.                                                                          | ![](images/event.JPG){width="162"}                                     |
-+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
-| In MC_edges file, where there'**s corresponding ids under events type** should be removed as well, as the relationship mapping doesn't make sense.   | ![Value under event type appear in target](images/events%20values.JPG) |
-|                                                                                                                                                      |                                                                        |
-| For example, past years appear in **target** field, thees rows should be removed from analyasis.                                                     |                                                                        |
-+------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------+
+    +----------------+--------------------+--------------------------------------------------+
+    | Column name    | Missing Value Rows | Percentage of Missing Value against full dataset |
+    +================+====================+==================================================+
+    | **shpcountry** | 22359              | 22359/34,576 = 64.67%                            |
+    +----------------+--------------------+--------------------------------------------------+
+    | **rcvcountry** | 2909               | 2909/34,576 = 8.41%                              |
+    +----------------+--------------------+--------------------------------------------------+
+
+### filter out missing values for nodes on raw data
+
+Check if there's any row that only have id, but there's no shpcountry and rcvcountry information. Delete these type of nodes as they do not add value to the analysis.
+
+```{r cleanNodeData}
+  #| code-fold: true
+  #| code-summary: "Show code"
+ 
+  # only keep distinct ids, Filter out rows with NA values in any of the country and type columns
+  MC2_nodes_cleaned<- MC2_nodes %>%
+  distinct(id, .keep_all = TRUE) %>%
+  filter(!is.na(shpcountry) & !is.na(rcvcountry))
+  #this will still have 34552 rows
+  
+  colSums(is.na(MC2_nodes_cleaned))
+  
+```
+
+After filtering, only 9332 entries left in MC2_nodes_cleaned to be used in the analytics. And there's no more missing value in the dataset.
 
 ### Cleaning data for edges
 
-```{r inspectEdgeData}
+```{r cleanEdgeData}
   #| code-fold: true
   #| code-summary: "Show code"
  
-    #to check data table
-    head(MC1_edges, n = 30)
-
+      #to check data table
+    head(MC2_edges, n = 30)
+    
+    #check for missing values
+    colSums(is.na(MC2_edges))
+    
     # Check summary statistics of the data
-    summary(MC1_edges)
+    summary(MC2_edges)
     
-    #To find duplicate rows in the MC1_edges data frame based on the "source" and "target" and "type" columns
-    #the subset() function is used to select only the "source" and "target" columns from MC1_edges. The duplicated() function is then applied to identify rows with duplicated combinations of "source" and "target". By using the | (OR) operator with duplicated(subset(...)) and duplicated(subset(...), fromLast = TRUE), it finds both the first occurrence and the last occurrence of the duplicated rows.
+```
 
-    duplicate_rows <- MC1_edges %>%
-    filter(duplicated(subset(., select = c("source", "target", "type" ))) |
-           duplicated(subset(., select = c("source", "target" , "type")), fromLast = TRUE))
+In edge dataset, **there's missing values in valueofgoods_omu, volumeteu and valueofgoodsusd column.**
+
+The percentage of missing value is as follows:
+
++----------------------+--------------------+-------------------------------------------------------------+
+| Column name          | Missing Value Rows | Percentage of Missing Value against full dataset            |
++======================+====================+=============================================================+
+| **valueofgoods_omu** | 5464097            | 5464097/5,464,378 =99.99%                                   |
+|                      |                    |                                                             |
+|                      |                    | Since most of the value are empty, we will drop this column |
++----------------------+--------------------+-------------------------------------------------------------+
+| **volumeteu**        | 520933             | 520933/5,464,378 = 9.5%                                     |
++----------------------+--------------------+-------------------------------------------------------------+
+| **valueofgoodsusd**  | 3017844            | 3017844/5,464,378 = 55.23%                                  |
++----------------------+--------------------+-------------------------------------------------------------+
+
+Given the above observation, **we will drop valueofgoods_omu column as most of the value are NA**. We will remove rows without volumeteu and valueofgoodsusd as well.
+
+### Select and filter Maritime related dataset
+
+Further more, **in terms of HSCODE, only chapter 03 and chatper 16 has maritime related product.**
+
+Based on knowledge from HSCODE classification - [HSN Code 3 - HS codes of Fish, crustaceans, molluscs, aquatic invertebrates ne (connect2india.com)](https://connect2india.com/hs-codes-directory/hs-code-3), we can interpret the HSCODE major categories by the code initials
+
++----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| HSCODE Initial | Chapter Meaning                                                                                                                                                                                                                                                                                                                                                                                                                   |
++================+===================================================================================================================================================================================================================================================================================================================================================================================================================================+
+| 301            | Live Fish                                                                                                                                                                                                                                                                                                                                                                                                                         |
++----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 302            | Fish, fresh or chilled, whole                                                                                                                                                                                                                                                                                                                                                                                                     |
++----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 303            | Fish, frozen, whole                                                                                                                                                                                                                                                                                                                                                                                                               |
++----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 304            | Fish fillets, fish meat, mince except liver, roe                                                                                                                                                                                                                                                                                                                                                                                  |
++----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 305            | Fish,cured, smoked, fish meal for human consumption                                                                                                                                                                                                                                                                                                                                                                               |
++----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 306            | Crustaceans                                                                                                                                                                                                                                                                                                                                                                                                                       |
++----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 307            | Molluscs                                                                                                                                                                                                                                                                                                                                                                                                                          |
++----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 308            | Fish and crustaceans, molluscs and other aquatic invertebrates Aquatic invertebrates other than crustaceans and molluscs, live, fresh, chilled, frozen, dried, salted or in brine smoked aquatic invertebrates other than crustaceans and molluscs, whether or not cooked before or during the smoking process flours, meals and pellets of aquatic invertebrates other than crustaceans and molluscs, fit for human consumption. |
++----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
++-------------------------------------------------------------------+-------------------------------------------------------+
+| [1604](https://connect2india.com/hs-codes-directory/hs-code-1604) | Prepared or preserved fish, fish eggs, caviar         |
++-------------------------------------------------------------------+-------------------------------------------------------+
+| [1603](https://connect2india.com/hs-codes-directory/hs-code-1603) | Extracts, juices of meat, fish, aquatic invertebrates |
++-------------------------------------------------------------------+-------------------------------------------------------+
+| [1605](https://connect2india.com/hs-codes-directory/hs-code-1605) | Crustaceans, molluscs, etc, prepared or preserved     |
++-------------------------------------------------------------------+-------------------------------------------------------+
+
+With above understanding, we select the desired data by filter the data with HSCODE either start with 301 - 308, or start with 1603-1605. And we drop valueofgoods_omu, remove NA fields in other columns.
+
+```{r prepMaritimeData}
+  MC2_edges_cleaned <- MC2_edges %>%
+  select (source, target,arrivaldate,hscode,volumeteu,weightkg,valueofgoodsusd)
+
+  #further delete either one side is NA
+  MC2_edges_cleaned<- MC2_edges_cleaned %>%
+  filter(!is.na(volumeteu ) & !is.na(valueofgoodsusd))
+  
+  #To filter the 6-digit HS codes in the MC2_edges data frame and only keep those starting with "301" to "308" and "16"
+  MC2_edges_maritime <- MC2_edges_cleaned %>%
+  filter(
+    source %in% MC2_nodes_cleaned$id,
+    target %in% MC2_nodes_cleaned$id,
+    grepl("^30[1-8]|^160[3-5]", hscode)
+  ) %>%
+  mutate(Year = format(as.Date(arrivaldate), "%Y"))
+  
+```
+
+For the MC2 Maritime dataset, we have 487724 rows for further processing. We will filter out the corresponding Nodes in MC2 Maritime dataset.
+
+```{r nodesForMaritime}
+  idm1 <- MC2_edges_maritime %>%
+  select(source) %>%
+  rename(id = source)
+  idm2 <- MC2_edges_maritime %>%
+  select(target) %>%
+  rename(id = target)
+  
+  mc2_nodes_maritime <- rbind(idm1, idm2) %>%
+  distinct()
+```
+
+```{r maritimeGraphConstruct}
+  #construct the full graph for maritime for future use
+  mc2_maritimeGraph<- tbl_graph(nodes = mc2_nodes_maritime,
+                       edges = MC2_edges_maritime,
+                       directed = TRUE)
+  #Note: Takes long time to plot, skip
+  # ggraph(mc2_maritimeGraph,
+  #        layout = "kk") +
+  #   geom_edge_link(aes()) +
+  #   geom_node_point(aes()) +
+  #   theme_graph()
+```
+
+There are 5879 distinc nodes in maritime dataset.
+
+## EDA: Understanding of Maritime dataset
+
+With the Maritime dataset selected, this will be the base and focus our focus for Visual Analysis. It's hard to explore details with the overall plot as it's very dense. We will break it down further.
+
+### Simple Temporal Pattern exploration with Interactive linechart
+
+Below is Interactive Exploration section, it is an interactive interface that allow us to explore any specific entities and their interaction with another entity dynamically.
+
+```{r simpleTemporalDisplay}
+    library(shiny)
+    #allow ploting of line diagram based on specific company
+    ui <- fluidPage(
+    titlePanel("Temporal Shipment Line Plot"),
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("companyInput", "Select a Company as source:", choices = unique(mc2_nodes_maritime$id))
+      ),
+      mainPanel(
+        plotOutput("timePlotVolume"),
+        plotOutput("timePlotWeight")
+      )
+    )
+  )
+  
+  server <- function(input, output) {
+    output$timePlotVolume <- renderPlot({
+      # Filter the data based on the selected company
+      selected_data1 <- MC2_edges_maritime %>%
+        filter(source == input$companyInput)
+     
+      # Group by date and calculate total TEU value
+      selected_data1 <- selected_data1 %>%
+        group_by(arrivaldate) %>%
+        summarise(TotalValue = sum(volumeteu, na.rm = TRUE))
+      #troubleshooting use:
+      # print(selected_data1)
+  
+      # Generate the plot
+      ggplot(selected_data1, aes(x = selected_data1$arrivaldate, y = selected_data1$TotalValue)) +
+        geom_line() +
+        labs(title = paste("Total Shipment Volume Over Time for", input$companyInput),
+             x = "Arrival Date",
+             y = "Total Volume (TEU)")
+    })
     
-    # check if there are any NA values in each column
-    colSums(is.na(MC1_edges))
+     output$timePlotWeight <- renderPlot({
+    selected_data2 <- MC2_edges_maritime %>%
+      filter(source == input$companyInput) %>%
+      group_by(arrivaldate) %>%
+      summarise(TotalValue = sum(weightkg, na.rm = TRUE))
+  
+    ggplot(selected_data2, aes(x = selected_data2$arrivaldate, y = selected_data2$TotalValue)) +
+      geom_line() +
+      labs(title = paste("Total Shipment Value Over Time for", input$companyInput),
+           x = "Arrival Date",
+           y = "Weight in kg")
+  })
     
-    unique(MC1_edges$key)
-    
-    unique(MC1_edges$type)
+  }
+  
+  shinyApp(ui = ui, server = server)
+
+```
+
+### Further understanding with HSCODE and HSCODE CATEGORIES
+
+To better understand maritime dataset, HSCODE chatper and subchapters were studied, we add high level category information for interpretation
+
+We then use the **`substr`** function to extract the initial three characters of the HSCODE column in the **MC2_edges_maritime** data frame. The **`hscode_categories`** list is indexed with the extracted values to obtain the corresponding hsCategory.
+
+```{r HSCategoryGeneration}
+  # Define the key-value pairs for HSCODE and hsCategory
+  hscode_categories <- list(
+    "306" = "Crustaceans",
+    "301" = "Live fish",
+    "304" = "Fish fillets, fish meat, mince except liver, roe",
+    "305" = "Fish, cured, smoked, fish meal for human consumption",
+    "302" = "Fish, fresh or chilled, whole",
+    "308" = "Fish and crustaceans, molluscs and other aquatic invertebrates",
+    "307" = "Molluscs",
+    "303" = "Fish, frozen, whole",
+    "1604" = "Prepared or preserved fish, fish eggs, caviar",
+    "1603" = "Extracts, juices of meat, fish, aquatic invertebrates",
+    "1605" = "Crustaceans, molluscs, etc, prepared or preserved"
+  )
 
  
+  # Add the hsCategory column based on the HSCODE values
+  MC2_edges_maritime$hsCategory <- hscode_categories[substr(MC2_edges_maritime$hscode, 1, 3)]
+  
+  # Identify records where the first three digits do not have a match
+  no_match_indices <- MC2_edges_maritime$hsCategory == "NULL"
+  
+  
+  # Update hsCategory using the first four digits for non-matching records
+  MC2_edges_maritime$hsCategory[no_match_indices] <- hscode_categories[substr(MC2_edges_maritime$hscode[no_match_indices], 1, 4)]
+  
+  # Check the updated data frame with the new column, What are the generated values
+  unique(MC2_edges_maritime$hsCategory )
+  # head(MC2_edges_maritime)
+  MC2_edges_maritime$hsCategory <- unlist(MC2_edges_maritime$hsCategory)
+
+
+  
+```
+
+#### Statistics based on HSCATEGORY and HSCODE
+
+Here we look into major category to check which one category of maritime product is most frequently being traded.
+
+```{r HScategoricalQuickView}
+  # Count the number of records in each hsCategory
+  # Create the bar chart
+  category_counts <- MC2_edges_maritime %>%
+    count(hsCategory) %>%
+    arrange(desc(n))
+  
+  ggplot(category_counts, aes(y = reorder(hsCategory, n), x = n)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = n), hjust = -0.1, vjust = 0.5, size = 3, color = "blue") +
+  labs(title = "Number of Records per HSCategory", x = "Count", y = "HSCategory") +
+  scale_x_continuous(limits = c(0, 250000)) +
+  theme(axis.text.y = element_text(angle = 0, hjust = 0.5),
+        plot.margin = margin(5.5, 8, 5.5, 5.5, "mm"))
+
+  MC2_edges_maritime_HSAgg <- MC2_edges_maritime %>%
+  group_by(source, target, hscode, hsCategory) %>%
+  summarise(hscount = n(),
+            sum_weightkg = sum(weightkg),
+            sum_volumeteu = sum(volumeteu),
+            sum_valueofgoodsusd = sum(valueofgoodsusd)) %>%
+  filter(source != target) %>%
+  ungroup()
+
+  # glimpse(MC2_edges_maritime_HSAgg)
+
+```
+
+And we want to further understand which are the top category of product interms of weight, volume and value of goods shipped.
+
+```{r }
+    # Select the top categories based on weight
+  top_weight <- MC2_edges_maritime_HSAgg %>%
+    group_by(hsCategory) %>%
+    summarise(total_weight = sum(sum_weightkg)) %>%
+    top_n(5, total_weight) %>%
+    arrange(desc(total_weight))
+  
+  # Select the top categories based on volumeteu
+  top_volumeteu <- MC2_edges_maritime_HSAgg %>%
+    group_by(hsCategory) %>%
+    summarise(total_volumeteu = sum(sum_volumeteu)) %>%
+    top_n(5, total_volumeteu) %>%
+    arrange(desc(total_volumeteu))
+  
+  # Select the top categories based on value of goodsusd
+  top_valueofgoodsusd <- MC2_edges_maritime_HSAgg %>%
+    group_by(hsCategory) %>%
+    summarise(total_valueofgoodsusd = sum(sum_valueofgoodsusd)) %>%
+    top_n(5, total_valueofgoodsusd) %>%
+    arrange(desc(total_valueofgoodsusd))
+  
+  # Create plots for each metric
+  plot_weight <- ggplot(top_weight, aes(y = reorder(hsCategory, total_weight), x = total_weight)) +
+    geom_bar(stat = "identity", fill = "blue") +
+    labs(title = "Top Categories by Weight", x = "Total Weight", y = "HSCategory")
+  
+  plot_volumeteu <- ggplot(top_volumeteu, aes(y = reorder(hsCategory, total_volumeteu), x = total_volumeteu)) +
+    geom_bar(stat = "identity", fill = "green") +
+    labs(title = "Top Categories by Volume teu", x = "Total Volumeteu", y = "HSCategory")
+  
+  plot_valueofgoodsusd <- ggplot(top_valueofgoodsusd, aes(y = reorder(hsCategory, total_valueofgoodsusd), x = total_valueofgoodsusd)) +
+    geom_bar(stat = "identity", fill = "red") +
+    labs(title = "Top Categories by Value of Goods", x = "Total Value of Goods (USD)", y = "HSCategory")
+
+    library(gridExtra)
+  grid.arrange(plot_weight, plot_volumeteu, plot_valueofgoodsusd, nrow = 3)
+```
+
+With all the above exploration, we will know that the top Category interms of Volume TEU and Value of goods shipped is **Prepared or preserved fish, fish eggs, caviar (initial hscode is 1604)** dnd the most frequently trade item with the top weight is in **Fish fillets, fish meat, mince except liver, roe (initial hscode is 304)**
+
+```{r topHscode}
+    #check how many HSCODE are there, and what is the top hscode
+  length(unique(MC2_edges_cleaned$hscode))
+  
+  HSfrequency<- MC2_edges_cleaned %>%
+  group_by(hscode) %>%
+    summarise(weights = n()) %>%
+  ungroup()
+```
+
+#### Insight between different attributes aggregated
+
+1st we explore if there's any linear/quadratic or any relationship between weight and value of goods shipped, and also relationship between volumeteu and value of goods shipped. Below are exploratory analysis to understand the data distribution and identify any outliers or anomalies
+
+```{r}
+  library(ggrepel, plotly)
+  p <- ggplot(data = MC2_edges_maritime,
+       aes(x= weightkg,
+           y=valueofgoodsusd)) +
+    geom_point()    +
+    facet_wrap(~ Year)
+  p
+```
+
+```{r}
+  p1 <- ggplot(data = MC2_edges_maritime,
+       aes(x= volumeteu,
+           y= valueofgoodsusd)) +
+    geom_point()    +
+    facet_wrap(~ Year)
+  p1
+
+```
+
+From both plot above, value of goods USD seems always low and didn't change linearly with the weight or volume teu.
+
+
+To investigate the maritime data, we aggregate them based on HSCODE, and understand which are the item that are frequently being traded (there will be higher count of HSCODE) and which are less popular items.
+
+```{r productTradeCharacter}
+  MC2_edges_maritime_aggrHSWeight <- MC2_edges_maritime %>%
+  group_by(source, target, hscode, hsCategory) %>%
+  summarise(hscount = n(),
+            average_weightkg = mean(weightkg),
+            average_volumeteu = mean(volumeteu),
+            average_valueofgoodsusd = mean(valueofgoodsusd)) %>%
+  filter(source != target) %>%
+  ungroup()
+
+  glimpse(MC2_edges_maritime_aggrHSWeight)
+  
+   #other than looking at consolidated data, we also look at raw transaction, how are the attribute distributed
+  ggtern(data=MC2_edges_maritime_aggrHSWeight,aes(x=average_weightkg,y=average_volumeteu, z=average_valueofgoodsusd)) +
+    tern_limits(breaks = seq(0.1,1,by = 0.1)) +
+    geom_text(aes(label=hscode),size=3) +
+  geom_point(aes(color=hscount),size=3)+
+  labs(title="Different HSCODE product's trade character") +
+  theme_rgbw()
+  
+```
+
+```{r factsWithTernary}
+  label <- function(txt) {
+    list(
+      text = txt, 
+      x = 0.1, y = 1,
+      ax = 0, ay = 0,
+      xref = "paper", yref = "paper", 
+      align = "center",
+      font = list(family = "serif", size = 15, color = "white"),
+      bgcolor = "#b3b3b3", bordercolor = "black", borderwidth = 2
+    )
+  }
+  
+  # reusable function for axis formatting
+  axis <- function(txt) {
+    list(
+      title = txt, tickformat = ".0%", tickfont = list(size = 10)
+    )
+  }
+  
+  ternaryAxes <- list(
+    aaxis = axis("average_weightkg"), 
+    baxis = axis("hscount"), 
+    caxis = axis("average_valueofgoodsusd")
+  )
+  
+  # Initiating a plotly visualization 
+  plot_ly(
+    MC2_edges_maritime_aggrHSWeight, 
+    a = ~average_weightkg, 
+    b = ~hscount, 
+    c = ~average_valueofgoodsusd, 
+    color = ~hscode, #I("black"), 
+    type = "scatterternary"
+  ) %>%
+    layout(
+      annotations = label("Ternary Markers"), 
+      ternary = ternaryAxes
+    )
+```
+
+### Analysis based on centrality
+
+Given the goal is identify temporal patterns for between entities, and categorize the types of business relationship patterns we find. Here we propose to conduct some centrality test for each of the nodes.
+
+### Different Degree of Centrality Calculation
+
+There are different centrality calculation we can do based on the network diagram provided. For example:
+
+-   Degree Centrality: it assume Assuming all neighbors are the same, Assuming all the edges are the same, and only calculate the number of connections. The more connection, the heavier is degree centrality.
+
+    -   High degree centrality can be considered as hubs or connectors in the network ==\> More likely whole-seller/transhipment
+
+    -   Low degree centrality ==\> More likely source supplier for fish or end buyer
+
+-   Eigenvalue Centrality: this method help us identify important nodes in the network that may attract attention, **we will identify high eigenvalue nodes as they are important nodes**
+
+    -   High degree centrality==\> Key players or central figures in the network, More likely whole-seller/transhipment, or major fish supplier, or major buyer
+
+    -   Low degree centrality ==\> More likely minor fish supplier or minor end buyer
+
+-   Betweenness Centrality: this help us identify the connection hub for the network, it may help us **identify where goods flow between each nodes** and which are the gate keeper nodes.
+
+    -   Higher betweenness centrality values indicate that a node acts as a "bridge" or a key intermediary, they control flow of goods or influence between other nodes ==\> key transhipment player/whole seller
+
+-   Closeness Centrality: It's sometimes important to reach everyone as soon as possible. This may not be relavant in the trade and shipping industry, **so we could drop this method.**
+
+-   Diversity centrality: also known as bridging social capital, plays an important role in social and business applications. This may help us know which node has the mode diverse supply for certain type of fish. **Keep this.**
+
+Hence, out of the 5 types of centrality, we will calculate and use the first 3 types.: **Degree Centrality, Eigenvalue Centrality, Betweenness Centrality**
+
+In the article **Identifying Central Carriers and Detecting Key Communities Within the Global Fish Transshipment Networks (Petrossian GA, Barthuly B and Sosnowski MC, 2022)**, in their Analytical Strategy, they mentioned both degree and eigenvector centrality scores were generated for each carrier to identify those with highest scores on both centrality metrics. We will also add in betweenness centrality, as these are the possible.
+
+```{r differentDegreeCentrality}
+  library(igraph)
+  #REFERENCE OF GRAPH CREATION EARLIER ON
+  #  mc2_maritimeGraph<- tbl_graph(nodes = mc2_nodes_maritime,
+                       # edges = MC2_edges_maritime,
+                       # directed = TRUE)
+  
+  #Method 1 - Degree Centrality
+  # Calculate degree centrality
+  degree_centrality <- degree(mc2_maritimeGraph)
+
+  #Method 2 - Eigenvalue Centrality
+  # Calculate eigenvalue centrality
+  eigen_centrality <- eigen_centrality(mc2_maritimeGraph)$vector
+  
+  #Method 3 - Betweenness Cenrality
+  # Calculate betweenness centrality
+  betweenness_centrality <- betweenness(mc2_maritimeGraph)
+  
+```
+
+We will also explore Inbound Degree Centrality and Outbound Degree Centrality: - Inbound degree centrality measures the number of incoming edges to a node in a directed network. In terms of business pattern, nodes with higher inbound degree centrality are more likely to be wholesaler/buyer. - Outbound Degree Centrality: Outbound degree centrality measures the number of outgoing edges from a node in a directed network. In terms of business pattern, nodes with higher inbound degree centrality are more likely to be fishing company/supplier/wholeseller.
+
+-   If someone is with both very high inbound/outbound degree centrality, they will likely be the wholeseller or company that does transhipment so maritime product go in and out from them.
+
+```{r inboundOubound}
+  # Calculate in-degree centrality
+  in_degree_centrality <- degree(mc2_maritimeGraph, mode = "in")
+  # Calculate out-degree centrality
+  out_degree_centrality <- degree(mc2_maritimeGraph, mode = "out")
+  
+  #assign the centrality calculation value back to nodes in the original graph
+  mc2_nodes_maritime$degree_centrality <- degree_centrality
+  mc2_nodes_maritime$eigen_centrality <- eigen_centrality
+  mc2_nodes_maritime$betweenness_centrality <- betweenness_centrality
+  mc2_nodes_maritime$in_degree_centrality <- in_degree_centrality
+  mc2_nodes_maritime$out_degree_centrality <- out_degree_centrality
+  
+  summary(mc2_nodes_maritime)
+
+```
+
+### Insight from degree centrality calculation
+
+Here we try clustering and use parallelogram to check the result
+
+```{r}
+  library(GGally)
+
+  # Select the centrality measures for clustering
+  centrality_data <- mc2_nodes_maritime[, c("degree_centrality", "eigen_centrality",  "betweenness_centrality","in_degree_centrality", "out_degree_centrality", "id")]
+  
+  # Perform k-means clustering
+  k <- 3  # Specify the desired number of clusters
+  set.seed(123)  # Set a seed for reproducibility
+  clusters <- kmeans(centrality_data[, -6], centers = k)
+  
+  # Add cluster information to the centrality data
+  centrality_data$cluster <- as.factor(clusters$cluster)
+
+
+  # Create a parallel coordinate plot
+  ggparcoord(centrality_data, columns = 1:5, groupColumn = "cluster", title = "Parallel Coordinate Plot of Clustering Results") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_color_manual(values = c("1" = "green", "2" = "blue", "3" = "red"))  # Customize the colors as desired
+
+
+```
+Insights: 
+
+We can see that:
+cluster 1 has high betweenness centrality but low in all other values ==> These are probably transhipment nodes
+Cluster 3 has median betweenness centrality value as well as degree centrality value ==> These are probably whole seller
+Cluster 2 may need further breakdown as some of them are high in eigen value, some are high in in degree centrality, some are high in out degree centrality.We will make some inference based on the connectivity
+
+
+
+```{r interactiveClusterPlot}
+  #Failed, no legend displayed 
+  library(plotly)
+
+  # Assign cluster values to "Business Pattern Label" column
+  centrality_data <- centrality_data %>%
+  mutate(
+    `PatternLabel` = case_when(
+      cluster == 1 ~ "Transhipment",
+      cluster == 3 ~ "Wholeseller",
+      cluster == 2 & degree_centrality < quantile(degree_centrality, 0.75) ~ "Minor business players",
+      cluster == 2 & degree_centrality > quantile(degree_centrality, 0.75) & eigen_centrality > mean(eigen_centrality) & betweenness_centrality > mean(betweenness_centrality)~ "Important Transhipment/Wholeseller",
+      cluster == 2 & degree_centrality > mean(degree_centrality) & eigen_centrality > mean(eigen_centrality) ~"Important connection",
+      cluster == 2 & eigen_centrality > mean(eigen_centrality) &  in_degree_centrality > quantile(in_degree_centrality, 0.75) ~ "Important Buyer",
+      cluster == 2 & eigen_centrality < mean(eigen_centrality) & in_degree_centrality > quantile(in_degree_centrality, 0.75) ~ "Normal Buyer",
+      cluster == 2 & eigen_centrality > mean(eigen_centrality) & out_degree_centrality > quantile(out_degree_centrality, 0.75)  ~ "Important supplier/fisher",
+      cluster == 2 & eigen_centrality < mean(eigen_centrality) & out_degree_centrality > quantile(out_degree_centrality, 0.75) ~ "Normal supplier/fisher",
+      TRUE ~ "Other"
+    )
+  )
+  # Convert the cluster column to a factor with ordered levels
+  centrality_data$cluster <- factor(centrality_data$cluster, levels = sort(unique(centrality_data$cluster)))
+
+  # Create an interactive parallel coordinate plot using plotly
+  plot <- plot_ly(centrality_data, type = "parcoords", dimensions = list(
+    list(label = "Degree Centrality", values = ~degree_centrality),
+    list(label = "Eigen Centrality", values = ~eigen_centrality),
+    list(label = "Betweenness Centrality", values = ~betweenness_centrality),
+    list(label = "In-Degree Centrality", values = ~in_degree_centrality),
+    list(label = "Out-Degree Centrality", values = ~out_degree_centrality)
+  ), line = list(color = ~cluster, colors = "Set1"), showlegend=TRUE)
+
+
+  # Add interactive features to the plot
+  plot <- plot %>%
+    layout(
+      title = "Parallel Coordinate Plot of Clustering Results",
+      hovermode = "closest"
+    )
+  #hover not working.. to be fixed
+  plot <- plot %>%
+    add_trace(
+      text = ~cluster,
+      hovertemplate = 'text'
+    )
+  # Display the interactive plot
+  plot
+
     
-```
-
-In edge dataset, no NA rows for each of the column. For duplicates, though the rest of the values are the same, but their key and weight are different.
-
-### Handling missing values and not useful value
-
-By checking MC1_nodes, quite a number of rows only have id, there's no type and country information. Delete these type of nodes as they do not add value to the analysis.
-
-```{r missingvalue}
-  #| code-fold: true
-  #| code-summary: "Show code"
- 
-  # only keep distinct idS
-  # Filter out rows with NA values in both country and type columns
-  MC1_nodes_unique<- MC1_nodes %>%
-  distinct(id, .keep_all = TRUE) %>%
-  filter(!is.na(country) | !is.na(type))
-
-  # further filter to remove the rows in MC1_nodes_unique where the type column is either "movement" or "event"
-  MC1_nodes_cleaned <- MC1_nodes_unique %>%
-  filter(!type %in% c("movement", "event"))
+  LabelCatCounts <- centrality_data %>%
+    count(PatternLabel) %>%
+    arrange(desc(n))
+  
+  ggplot(LabelCatCounts, aes(y = reorder(PatternLabel, n), x = n)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = n), hjust = -0.1, vjust = 0.5, size = 3, color = "blue") +
+  labs(title = "Number of Nodes in different Business Pattern", x = "Count", y = "PatternLabel") +
+  theme(axis.text.y = element_text(angle = 45, hjust = 0.5),
+        plot.margin = margin(5.5, 8, 5.5, 5.5, "mm"))
 
 ```
 
-After filtering, only 2721 entries left in MC1_nodes_cleaned to be used in the analytics.
 
-### Data consistency in entity names and relationships
+## Interactive Network Graph with visNetwork
 
-Here we need to remove rows in edge, where either source or target id is not found in nodes. Nodes id should be the Primary Key for all source/target entries in Edge, **filtering is required in edge dataset to only keep source/target** with the ids appeared in node dataset.
+Due to the data size, we will only plot for HSCODE starting with 1604 or 304, and look at the nodes with their business patterns.
 
-```{r consistency}
-  #| code-fold: true
-  #| code-summary: "Show code"
- 
-  MC1_edges_cleaned <- MC1_edges %>%
-  filter(source %in% MC1_nodes_cleaned$id, target %in% MC1_nodes_cleaned$id)
+
+```{r focusOnTopCategory}
+  mc2_edges_maritime_focused <- MC2_edges_maritime %>%
+  filter(str_detect(hscode, "^1604|^304")) %>%
+  group_by(source, target, hscode, Year) %>%
+  summarise(weights = n()) %>%
+  filter(source != target) %>%
+  ungroup()
+
+  # Extracting unique node IDs
+  id1 <- mc2_edges_maritime_focused %>%
+    select(source) %>%
+    rename(id = source)
+  id2 <- mc2_edges_maritime_focused %>%
+    select(target) %>%
+    rename(id = target)
+  mc2_nodes_maritime_focused <- rbind(id1, id2) %>%
+    distinct()
+  
+  mc2_nodes_maritime_focused <- mc2_nodes_maritime_focused %>%
+  left_join(centrality_data %>% distinct(id,  PatternLabel), by = c("id" = "id")) 
+```
+
+```{r}
+
+  mc2_graph_maritime_focused <- tbl_graph(nodes = mc2_nodes_maritime_focused,
+                       edges = mc2_edges_maritime_focused,
+                       directed = TRUE)
+  
+  edges_df <- mc2_graph_maritime_focused %>%
+  activate(edges) %>%
+  as.tibble()
+
+  nodes_df <- mc2_graph_maritime_focused %>%
+  activate(nodes) %>%
+  as.tibble() %>%
+  rename(label = id) %>%
+  mutate(id=row_number()) %>%
+  select(id, label)
+
+  visNetwork(nodes_df,
+           edges_df)  %>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  visEdges(arrows = "to", 
+           smooth = list(enabled = TRUE, 
+                         type = "curvedCW"))%>%
+  visOptions(highlightNearest = list(enabled = TRUE,
+                                     degree = 1,
+                                     hover = TRUE,
+                                     labelOnly = TRUE),
+             nodesIdSelection = TRUE,
+             selectedBy = "Year") %>%
+  visLayout(randomSeed = 1234)
+  
+```
+
+## Other Analysis
+Ny ploting boxplot for maritime data, We can see that **there are some outlier values in terms of weightkg and valueofgoodsusd.** Use boxplot to visualize the outlier values
+
+```{r}
+  library(ggdist)
+    # Boxplot for weightkg
+  boxplot(MC2_edges_maritime$weightkg, main = "Boxplot of weightkg")
+  # Calculate Tukey's fences for weightkg
+  weightkg_fences <- boxplot.stats(MC2_edges_maritime$weightkg)$out
+  meanWeightkg <- mean(MC2_edges_maritime$weightkg)
+  
+  # Boxplot for valueofgoodusd
+  boxplot(MC2_edges_maritime$valueofgoodsusd, main = "Boxplot of valueofgoodusd")
+  # Calculate Tukey's fences for valueofgoodusd
+  valueofgoodusd_fences <- boxplot.stats(MC2_edges_maritime$valueofgoodsusd)$out
+  meanWeightkg <- mean(MC2_edges_maritime$valueofgoodsusd)
+```
+
+#### Investigation on a special case - Bihar GmbH & Co. KG Carriers
+
+By visually inspect the data, the data point that is further away from others are two records with Bihar GmbH & Co. KG Carriers, with value more than 4M. Take out this Bihar GmbH & Co. KG Carriers for special investigation.
+
+```{r}
+  filtered_records_BiharGmbh <- MC2_edges_maritime[MC2_edges_maritime$target == "Bihar  GmbH & Co. KG Carriers", ]
+  unique(filtered_records_BiharGmbh$hscode)
+```
+
+This company Bihar GmbH & Co. KG Carriers only ship one type of product which is 160414, which is TUNAS WHOLE OR IN PIECES BUT NOT MINCED. We can see from the graph below, there are quite a number of companies who supply tunas to the Bihar GmbH & Co. KG Carriers. We can see there are total 29 suppliers with the list of company names.
+
+```{r}
+  
+  # Load required packages
+  library(igraph)
+  
+  # Create a graph object from the filtered records
+  graph <- graph.data.frame(filtered_records_BiharGmbh, directed = TRUE)
+  
+   # Plot the network diagram, test and try which is the best layout
+  plt1 <- plot(graph, layout=layout.circle, main="circle")
+  # plt2 <- plot(graph, layout = layout.fruchterman.reingold)
+  # plot(graph, layout=layout.sphere, main="sphere")
+  # plot(graph, layout=layout.random, main="random")
+  
+  #we check how many suppliers in total, and who are they
+  unique(filtered_records_BiharGmbh$source)
+```
+
+So among these companies who trade with Bihar GmbH & Co. KG Carriers, some are more frequent trader and has longer relationship while some trade only happened 1 time. Here we further look into the consolidated trade pattern, as well as individual trade pattern.
+
+```{r tradefrequency}
+  #know more about which are the company traded with source, when is the first and last date, and the trade volume
+  #group the filtered data by source using the group_by() function. Then, using the summarise() function, we calculate the first date using min(arrivaldate), the last date using max(arrivaldate), and the total volumeteu using sum(volumeteu).
+  #with this we will be able to know if it's long term shipping relationship or very short term relationship
+  filtered_data <- filtered_records_BiharGmbh %>%
+  mutate(arrivaldate = as.Date(arrivaldate))
+  
+  result <- filtered_data %>%
+  group_by(source) %>%
+  summarise(
+    first_date = min(arrivaldate),
+    last_date = max(arrivaldate),
+    cum_volume = sum(volumeteu),
+    cum_weight = sum(weightkg),
+    cum_valueusd =  sum(valueofgoodsusd)
+  )%>%
+  mutate(tradeRelationshipAge = last_date - first_date)%>%
+  arrange(tradeRelationshipAge)  # Sort by tradeRelationshipAge in ascending order
+
+  #this displays how long is the trade relationship
+  result
+  
+  
+  
+  #Building the static ternary plot, by looking at different soruces
+  ggtern(data=result,aes(x=cum_weight,y=cum_volume, z=cum_valueusd)) +
+  geom_point()+
+  labs(title="Trade pattern with Bihar GmbH & Co. KG Carriers for different sources") +
+  theme_rgbw()
+  
+  #other than looking at consolidated data, we also look at raw transaction, how are the attribute distributed
+  ggtern(data=filtered_records_BiharGmbh,aes(x=weightkg,y=volumeteu, z=valueofgoodsusd)) +
+  geom_point()+
+  labs(title="Trade pattern with Bihar GmbH & Co. KG Carriers for each transactions (Not year specific)") +
+  theme_rgbw()
+```
+
+With the above analysis, **this company draws our attention, the only good it ship is Tuna. In both individual trade and consolidated trade statistics, it exhibits the pattern of shipping goods with both low volume and low weight, however very high in valueofgoods.**
+
+```{r networkgraph with year}
+  #| warning: false
+  #| echo: false
+  #From here we can see year by year the major supplier changed
+  g <- ggraph(graph, 
+            layout = "in_circle") + 
+  geom_edge_link(aes(width=weightkg), 
+                 alpha=0.3) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes( size = 2))
+
+  g + facet_edges(~Year)
+```
+
+From the above network diagram, we can see that this company start small in 2029, then find some other source of Tuna in 2030, and between 2031 to 2034 it's trying to get the supply from multiple supplier while maintain 1 dominant supplier unchanged.
+
+
+Here we **need to remove rows in edge, where either source or target id is not found in nodes.** Nodes id should be the Primary Key for all source/target entries in Edge, **filtering is required in edge dataset to only keep source/target** with the ids appeared in node dataset.
+
+```{r networkgraph with year2}
+  #| warning: false
+  #| echo: false
+  #using filtered_records_BiharGmbh as edge
+  
+  #Preparing nodes data with filtered_records_BiharGmbh
+  ids <- filtered_records_BiharGmbh %>%
+  select(source) %>%
+  rename(id = source)
+  idt <- filtered_records_BiharGmbh %>%
+  select(target) %>%
+  rename(id = target)
+  
+  nodes_BiharGmbh <- rbind(ids, idt) %>%
+  distinct()
+
+  graph_BiharGmbh <- tbl_graph(nodes = nodes_BiharGmbh,
+                       edges = filtered_records_BiharGmbh,
+                       directed = TRUE)
+  
+  #Reviewing the output tidygraph’s graph object
+  graph_BiharGmbh 
+  
+  # #Ploting diagram - works
+  ggraph(graph_BiharGmbh,
+       layout = "as_star") +
+  geom_edge_link(aes(width=valueofgoodsusd)) +
+  geom_node_point(aes(size = 2)) +
+  theme_graph() +
+  facet_edges(~ Year)
+  
+  
+```
+
+### Further Analysis focus on 160414 (Tuna)
+
+After the analysis of Bihar GmbH & Co. KG Carriers Then we remove Bihar GmbH & Co. KG Carriers and plot another set of boxplot with other data points.
+
+```{r remove outlier}
+
+  # Remove records where "target" column is equal to "Bihar GmbH & Co. KG Carriers"
+  MC2_edges_maritime_noOutlier <- MC2_edges_maritime[MC2_edges_maritime$target != "Bihar  GmbH & Co. KG Carriers", ]
+
+  # Remove outliers from weightkg
+  MC2_edges_maritime_noOutlier <- MC2_edges_maritime_noOutlier[!(MC2_edges_maritime_noOutlier$weightkg %in% weightkg_fences), ]
+
+  
+  #new boxplot after removing outliers
+  boxplot(MC2_edges_maritime_noOutlier$weightkg, main = "Boxplot of weightkg")
+  boxplot(MC2_edges_maritime_noOutlier$valueofgoodsusd, main = "Boxplot of valueofgoodusd")
+  
+    t <- list(size = 19,
+    face = "bold")
+  
+  t1 <- list(
+    family = "Garamond",
+    size = 15,
+    face = "bold")
+  
+  figure1 <- plot_ly(
+    data = MC2_edges_maritime_noOutlier,
+    y = ~valueofgoodsusd,
+    type = "box",
+    color = ~Year,
+    colors = "Reds",
+    showlegend = FALSE,
+    boxmean = TRUE
+  ) %>% 
+    layout(title= list(text = "Weight of goods in KG by Year",font = t),
+           xaxis = list(title = list(text ='Year', font = t)),
+           yaxis = list(title = list(text ='Weight of goods in KG ', font = t)))
+  
+  figure2 <- plot_ly(
+    data = MC2_edges_maritime_noOutlier,
+    y = ~valueofgoodsusd,
+    type = "box",
+    color = ~Year,
+    colors = "Blues",
+    showlegend = FALSE,
+    boxmean = TRUE
+  ) %>% 
+    layout(title= list(text = "value of goods usd by Year",font = t1),
+           xaxis = list(title = list(text ='Year', font = t1)),
+           yaxis = list(title = list(text ='value of goods in usd ', font = t1)))
+  
+  figure1
+  figure2
 
 ```
 
-The number of rows reduce from 11069 to 6490 after filtering.
+We can see that mean weight shipped for maritime product is around 20000kg per trade transaction, while value of goods could be very different. This could be depends on different value of maritime product, some are high value goods which may attract people taking risk for the IUU fishing.
 
-## Entity Visualization
+Hence, we may further analyze which are the popular maritime products, especially which are the ones have higher values.
 
-### create The **tbl_graph** object
+Here we selected Tuna (160414) as an example. we try to check for the rest of the companies trading Tuna, if there's any patterns.
 
-Using tidygraph package, we will build tidygraph network graph data.frame. The graph is directed with source and target specificed. 
+```{r}
+  mc2_edges_tuna <- MC2_edges_maritime %>%
+  filter(hscode == "160414") %>%
+  group_by(source, target, hscode, Year) %>%
+    summarise(weights = n()) %>%
+  filter(source!=target) %>%
+  #filter(weights > 20) %>%
+  ungroup()
 
-(Planning: Display entities relationship as we focused (graph network))
 
-```{r graphobject}
-peopleEntityRelationship <- tbl_graph(nodes = MC1_nodes_cleaned,
-                           edges = MC1_edges_cleaned, 
-                           directed = TRUE)
+  #prepare corresponding nodes data based on aggregated hscode 160414 data
+  id1 <- mc2_edges_tuna %>%
+    select(source) %>%
+    rename(id = source)
+  id2 <- mc2_edges_tuna %>%
+    select(target) %>%
+    rename(id = target)
+  mc2_nodes_tuna <- rbind(id1, id2) %>%
+    distinct()
+  
+  
+  filtered_nodes <- mc2_nodes_tuna %>%
+  left_join(centrality_data, by = c("id" = "id")) %>%
+  filter(!PatternLabel %in% c("Minor business players")) 
+
+  # Filter the edges to keep only the ones where both source and target nodes are present in the filtered nodes
+  filtered_edges <- mc2_edges_tuna %>%
+    filter(source %in% filtered_nodes$id & target %in% filtered_nodes$id)
+  
+  # Create the graph using the filtered nodes and edges
+  mc2_tuna_graph <- tbl_graph(nodes = filtered_nodes, edges = filtered_edges, directed = TRUE)
+  
+  #basic graph for Tuna related activities and nodes
+  ggraph(mc2_tuna_graph,
+       layout = "as_star") +
+  geom_edge_link(aes()) +
+  geom_node_point(aes(colour = PatternLabel)) +
+  theme_graph() +
+  facet_edges(~ Year)
 ```
 
-## Interactive Exploration
+```{r}
+    #Preparing edges tibble data frame
+  edges_tuna_df <- mc2_tuna_graph %>%
+  activate(edges) %>%
+  as.tibble()
 
-(Planning: Interactive Exploration: Develop an interactive interface that allows analysts to explore the entities and their context dynamically. Enable functionalities like filtering, highlighting, and zooming to focus on specific entities or connections of interest. This interactive approach will help analysts identify patterns, anomalies, and potential links to illegal fishing more efficiently.)
+  nodes_tuna_df <- mc2_tuna_graph %>%
+  activate(nodes) %>%
+  as.tibble() %>%
+  rename(label = id) %>%
+  mutate(id=row_number()) %>%
+  select(id, label)
+  
+  visNetwork(nodes_tuna_df,
+           edges_tuna_df) %>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  visOptions(highlightNearest = TRUE,
+             nodesIdSelection = TRUE) %>%
+  visEdges(arrows = "to", 
+           smooth = list(enabled = TRUE, 
+                         type = "curvedCW")) %>%
+  visGroups(groupname = ~PatternLabel) %>%
+  visLegend() %>%
+  visLayout(randomSeed = 123)
+  
+  
+#   visNetwork(nodes_tuna_df, edges_tuna_df) %>%
+#   visIgraphLayout(layout = "layout_with_fr") %>%
+#   visOptions(highlightNearest = TRUE,
+#              nodesIdSelection = TRUE)
+```
 
-## Interpretation:
 
-(Planning: provide evidence of each entity, iif they are involved in illegal fishing, provide conclusion) 00 600 words and 6 images
 
-(Planning: put in compare and contrast of identified entities vs. other entities, discuss how visual analytics hhelp to find entities with potential issues -- what are the patterns?) -- 400 words and 4 images.
 
-## Reflection:
+## Others - For future reference 
+By looking at the edge data, each company may have transaction with another company multiple times with differnt timing and different volume/value of goods. Since there's time information in MC2_edges, we will aggregate the values to form some counts of values before we form the network graph.
 
-What was the most difficult aspect of working with this knowledge graph? Did you have the tools and resources you needed to complete the challenge? What additional resources would have helped you? (300 words)
+```{r}
+  aggregated_data <- MC2_edges_cleaned %>%
+  group_by(source, target) %>%
+  summarise(
+    weight = n(),
+    teu_sum = sum(volumeteu),
+    weightkg_sum = sum(weightkg),
+    valueofgoodsusd_sum = sum(valueofgoodsusd)
+  )
+  
+  aggregatedHS_data <- MC2_edges_cleaned %>%
+  group_by(source, target, hscode) %>%
+  summarise(
+    weight = n(),
+    teu_sum = sum(volumeteu),
+    weightkg_sum = sum(weightkg),
+    valueofgoodsusd_sum = sum(valueofgoodsusd)
+  )
+  
+  glimpse(aggregatedHS_data)
+  # View the aggregated data
+  print(aggregated_data)
+```
+
