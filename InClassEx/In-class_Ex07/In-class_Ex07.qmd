@@ -1,0 +1,52 @@
+---
+title: "In-class_Ex07"
+author: "LIN LIN"
+---
+
+```{r loadLibrary}
+  #lubridate is part of the Tidyverse family
+
+  pacman::p_load(ggHoriPlot, ggthemes, tidyverse)
+```
+
+### Import data by read csv
+
+```{r loadData}
+  averp <- read_csv("data/AVERP.csv") 
+  #do the date manipulation, original date field read in is char field, it's not properly recognized as date. Do a convertion with dd-mm-yy conversion
+  #this is leverage on lubridate R page
+  averp <- averp%>%
+  mutate(`Date` = dmy(`Date`))
+```
+
+![](images/convert%20data.JPG)
+
+### **Plotting the horizon graph**
+
+To handle the time series display with geom horizon:
+
+```{r horizon}
+  #horizon graph is controlled by geom_horizon
+  
+  averp %>% 
+  filter(Date >= "2018-01-01") %>%   #select the date range here
+  ggplot() +                         # this shows horizon is an extension of ggplot, we want horizon plot, it will be based on ggplot
+  geom_horizon(aes(x = Date, y=Values),   #our x are the dates, where y are the absolute value
+               origin = "midpoint", 
+               horizonscale = 6)+
+  facet_grid(`Consumer Items`~.) +   #we use facet to show different consumer items, the `consumer items` is to let system recognize when there's a space in between. ~. 
+    theme_few() +
+  scale_fill_hcl(palette = 'RdBu') +  #this is red to blue color scheme, the below part is optional
+  theme(panel.spacing.y=unit(0, "lines"), strip.text.y = element_text(
+    size = 5, angle = 0, hjust = 0),   #trial and error for this number to fix the text in
+    legend.position = 'none',
+    axis.text.y = element_blank(),
+    # axis.text.x = element_text(size=7),
+    # axis.title.y = element_blank(),
+    # axis.title.x = element_blank(),
+    # axis.ticks.y = element_blank(),
+    # panel.border = element_blank()
+    ) +
+    scale_x_date(expand=c(0,0), date_breaks = "3 month", date_labels = "%b%y") +
+  ggtitle('Average Retail Prices of Selected Consumer Items (Jan 2018 to Dec 2022)')
+```

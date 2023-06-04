@@ -1,0 +1,72 @@
+---
+title: "Hands-on_Ex07"
+author: "Lin Lin"
+format: html
+editor: visual
+---
+
+## Visualising and Analysing Time-oriented Data
+
+```{r}
+  #echo | False
+  pacman::p_load(scales, viridis, lubridate, ggthemes, gridExtra, readxl, knitr, data.table, CGPfunctions, ggHoriPlot, tidyverse)
+```
+###  Importing the data
+
+Loading data from the data file
+
+```{r}
+  attacks <- read_csv("data/eventlog.csv")
+
+```
+Examining the data structure by using kable(), review the structure of the imported data frame.
+Data information:
+- timestamp field stores date-time values in POSIXct format.
+- source_country field stores the source of the attack. It is in ISO 3166-1 alpha-2 country code.
+- tz field stores time zone of the source IP address.
+
+```{r}
+  #| echo: false
+  kable(head(attacks))
+
+
+```
+### Data Preparation
+ 
+Step 1: Deriving weekday and hour of day fields
+
+Before we can plot the calender heatmap, two new fields namely wkday and hour need to be derived. In this step, we will write a function to perform the task.
+
+```{r}
+  make_hr_wkday <- function(ts, sc, tz) {
+  real_times <- ymd_hms(ts, 
+                        tz = tz[1], 
+                        quiet = TRUE)
+  dt <- data.table(source_country = sc,
+                   wkday = weekdays(real_times),
+                   hour = hour(real_times))
+  return(dt)
+  }
+```
+
+Step 2: Deriving the attacks tibble data frame
+
+```{r}
+  wkday_levels <- c('Saturday', 'Friday', 
+                  'Thursday', 'Wednesday', 
+                  'Tuesday', 'Monday', 
+                  'Sunday')
+
+  attacks <- attacks %>%
+  group_by(tz) %>%
+  do(make_hr_wkday(.$timestamp, 
+                   .$source_country, 
+                   .$tz)) %>% 
+  ungroup() %>% 
+  mutate(wkday = factor(
+    wkday, levels = wkday_levels),
+    hour  = factor(
+      hour, levels = 0:23))
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

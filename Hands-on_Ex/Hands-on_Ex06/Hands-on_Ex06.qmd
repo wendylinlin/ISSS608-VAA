@@ -1,0 +1,171 @@
+---
+title: "Hands-on_Ex06"
+author: "Lin Lin"
+---
+
+# Exercise 1. Creating Ternary Plot with R
+
+Package used:
+
+-   [**ggtern**](http://www.ggtern.com/), a ggplot extension specially designed to plot ternary diagrams. The package will be used to plot static ternary plots.
+
+-   [**Plotly R**](https://plot.ly/r/), an R package for creating interactive web-based graphs via plotly's JavaScript graphing library, plotly.js . The **plotly R** libary contains the *ggplotly* function, which will convert **ggplot2** figures into a Plotly object.
+
+```{r}
+  #below are for ternary plot, run the installation once only
+  require(devtools)
+  install_version("ggtern", version = "3.4.1", repos = "http://cran.us.r-project.org")
+```
+
+```{r}
+  #|eval: false
+  pacman::p_load('plotly', 'tidyverse') #this is for ternary plot
+  pacman::p_load(corrplot, ggstatsplot) # required corrplot, ggstatsplot, tidyverse for Correlation Matrix
+  library(ggtern)
+  
+```
+
+```{r}
+  #Reading the data into R environment, for ternary plot
+  pop_data <- read_csv("data/respopagsex2000to2018_tidy.csv")
+  #read data for Correlation Matrix
+  wine <- read_csv("data/wine_quality.csv")
+```
+
+### Mutate the data
+
+```{r}
+   # use the mutate() function of dplyr package to derive three new measures, namely: young, active, and old.
+    
+  #Deriving the young, economy active and old measures
+  agpop_mutated <- pop_data %>%
+    mutate(`Year` = as.character(Year))%>%
+    pivot_wider(names_from = AG, values_from = Population) %>%
+    mutate(YOUNG = rowSums(.[4:8]))%>%
+    mutate(ACTIVE = rowSums(.[9:16]))  %>%
+    mutate(OLD = rowSums(.[17:21])) %>%
+    mutate(TOTAL = rowSums(.[22:24])) %>%
+    filter(Year == 2018)%>% # this is for specific year
+    filter(TOTAL > 0)
+```
+
+### Plotting a static ternary diagram
+
+Use ggtern() function of ggtern package to create a simple ternary plot.
+
+```{r normalTernaryPlot}
+#calculation of percentage is automatically done by usign ggtern
+
+# have the 3 axis, x, y, z with different attribute and plot
+  ggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point()
+```
+
+```{r changedTernaryPlot}
+  #Building the static ternary plot
+ggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point() +
+  labs(title="Population structure, 2015") +
+  theme_rgbw()
+```
+
+#### Interactive Ternary plot
+
+```{r}
+#| fig-width: 20
+#| fig-height: 20
+
+  # reusable function for creating annotation object
+label <- function(txt) {
+  list(
+    text = txt, 
+    x = 0.1, y = 1,
+    ax = 0, ay = 0,
+    xref = "paper", yref = "paper", 
+    align = "center",
+    font = list(family = "serif", size = 15, color = "white"),
+    bgcolor = "#b3b3b3", bordercolor = "black", borderwidth = 2
+  )
+}
+
+# reusable function for axis formatting
+axis <- function(txt) {
+  list(
+    title = txt, tickformat = ".0%", tickfont = list(size = 10)
+  )
+}
+
+ternaryAxes <- list(
+  aaxis = axis("Young"), 
+  baxis = axis("Active"), 
+  caxis = axis("Old")
+)
+
+# Initiating a plotly visualization 
+plot_ly(
+  agpop_mutated, 
+  a = ~YOUNG, 
+  b = ~ACTIVE, 
+  c = ~OLD, 
+  color = I("black"), 
+  type = "scatterternary"
+) %>%
+  layout(
+    annotations = label("Ternary Markers, A = Young, B = Active, C = Old"), 
+    ternary = ternaryAxes
+  )
+```
+
+### Plotting Correlation Matrix
+
+```{r}
+  #this will plot first 10 attribute
+  pairs(wine[,1:11])
+  #this will plot from 2-12 attributes, and only draw on the lower corner
+  pairs(wine[,2:12], upper.panel = NULL)
+  #the diagram ca be ploted for the top right corder as well.
+  pairs(wine[,2:12], lower.panel = NULL)
+```
+
+#### Including with correlation coefficients
+
+To show the correlation coefficient of each pair of variables instead of a scatter plot, panel.cor function will be used. This will also show higher correlations in a larger font.
+
+```{r}
+  panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...) {
+  usr <- par("usr")
+  on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y, use="complete.obs"))
+  txt <- format(c(r, 0.123456789), digits=digits)[1]
+  txt <- paste(prefix, txt, sep="")
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)
+  }
+  
+  pairs(wine[,2:12], 
+        upper.panel = panel.cor)
+```
+
+## Visualising Correlation Matrix: ggcormat()
+
+We know that there are at least three R packages provide function to plot corrgram, they are:
+
+-   corrgram
+-   ellipse
+-   corrplot
+
+Using ggcormat to plot:
+
+```{r}
+# ggstatsplot::ggcorrmat(
+#   data = wine, 
+#   cor.vars = 1:11,
+#   ggcorrplot.args = list(outline.color = "black", 
+#                          hc.order = TRUE,
+#                          tl.cex = 10),
+#   title    = "Correlogram for wine dataset",
+#   subtitle = "Four pairs are no significant at p < 0.05"
+# )
+
+```
