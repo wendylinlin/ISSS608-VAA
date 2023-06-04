@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.335">
+<meta name="generator" content="quarto-1.2.475">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -176,6 +176,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html">
  <span class="dropdown-text">Hands-on Exercise 5</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex06/Hands-on_Ex06.html">
+ <span class="dropdown-text">Hands-on Exercise 6</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -237,7 +241,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#problem-statement" id="toc-problem-statement" class="nav-link active" data-scroll-target="#problem-statement">Problem Statement</a>
+  <ul class="collapse">
+  <li><a href="#goal-of-this-file-contextualize-data" id="toc-goal-of-this-file-contextualize-data" class="nav-link" data-scroll-target="#goal-of-this-file-contextualize-data">Goal of this file: Contextualize Data</a></li>
+  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing">Data Preprocessing</a>
+  <ul class="collapse">
+  <li><a href="#cleaning-data-for-nodes" id="toc-cleaning-data-for-nodes" class="nav-link" data-scroll-target="#cleaning-data-for-nodes">Cleaning data for nodes</a></li>
+  <li><a href="#cleaning-data-for-edges" id="toc-cleaning-data-for-edges" class="nav-link" data-scroll-target="#cleaning-data-for-edges">Cleaning data for edges</a></li>
+  <li><a href="#handling-missing-values-and-not-useful-value" id="toc-handling-missing-values-and-not-useful-value" class="nav-link" data-scroll-target="#handling-missing-values-and-not-useful-value">Handling missing values and not useful value</a></li>
+  <li><a href="#data-consistency-in-entity-names-and-relationships" id="toc-data-consistency-in-entity-names-and-relationships" class="nav-link" data-scroll-target="#data-consistency-in-entity-names-and-relationships">Data consistency in entity names and relationships</a></li>
+  </ul></li>
+  <li><a href="#entity-visualization" id="toc-entity-visualization" class="nav-link" data-scroll-target="#entity-visualization">Entity Visualization</a>
+  <ul class="collapse">
+  <li><a href="#create-the-tbl_graph-object" id="toc-create-the-tbl_graph-object" class="nav-link" data-scroll-target="#create-the-tbl_graph-object">create The <strong>tbl_graph</strong> object</a></li>
+  </ul></li>
+  <li><a href="#interactive-exploration" id="toc-interactive-exploration" class="nav-link" data-scroll-target="#interactive-exploration">Interactive Exploration</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -262,7 +288,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">May 13, 2023</p>
+      <p class="date-modified">June 3, 2023</p>
     </div>
   </div>
     
@@ -332,8 +358,412 @@ time (1): SentTime
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">abbr =</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<section id="problem-statement" class="level1">
+<h1>Problem Statement</h1>
+<p>Seafood is a highly traded commodity globally, with <strong>over a third</strong> of the world’s population relying on it as a primary source of protein. However, illegal, unreported, and unregulated fishing practices have led to <strong>overfishing and pose significant threats to marine ecosystems, food security</strong> <strong>in coastal communities, and regional stability.</strong> These activities are associated with organized crime and human rights violations.</p>
+<p>FishEye International, a nonpartisan NGO, aims to understand the factors driving illegal fishing. They have collected data over the years to gain insights into this issue. FishEye International is getting help to <strong>assist them in interpreting the conflicting data</strong> and eventually making recommendations on how to address illegal fishing and its broader impacts.</p>
+<section id="goal-of-this-file-contextualize-data" class="level2">
+<h2 class="anchored" data-anchor-id="goal-of-this-file-contextualize-data">Goal of this file: Contextualize Data</h2>
+<p>FishEye has collects online news articles about fishing, marine industry, and international maritime trade. To facilitate their analysis, FishEye uses a natural language processing tool to <strong>extract the names of entities (people and businesses) and the relationships between them.</strong> We will focus on the following 4 entities:</p>
+<p><strong>Entities to investigate</strong></p>
+<ol type="1">
+<li><p>Mar de la Vida OJSC</p></li>
+<li><p>979893388</p></li>
+<li><p>Oceanfront Oasis Inc Carrie</p></li>
+<li><p>8327</p></li>
+</ol>
+</section>
+<section id="data-preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing">Data Preprocessing</h2>
+<p>Load the library and read the json relationship file MC1.</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Load Libraries</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  pacman<span class="sc">::</span><span class="fu">p_load</span>(jsonlite,tidygraph, ggraph, visNetwork, tidyverse)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#load Data</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#If we already have jsonlite, we don't need it anymore</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  MC1<span class="ot">&lt;-</span> jsonlite<span class="sc">::</span><span class="fu">fromJSON</span>(<span class="st">"data/MC1.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>After checking MC1, the data is a found to be in a list and it’s not stored in proper structure in R for Graph objects, such as igraph, tidygraph etc. We need to pull out the nodes and links out from the MC1 and <strong>store them in R Graph Objects.</strong></p>
+<p>By visual inspection of raw data, MC1 Nodes and Links both contain “dataset” column with only “MC1” as value, they can be eliminated.</p>
+<p>We picked the desired fields and reorganized the columns <strong>using select function.</strong></p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  MC1_nodes <span class="ot">&lt;-</span> <span class="fu">as.tibble</span>(MC1<span class="sc">$</span>nodes) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, type, country) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `as.tibble()` was deprecated in tibble 2.0.0.
+ℹ Please use `as_tibble()` instead.
+ℹ The signature and semantics have changed, see `?as_tibble`.</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  MC1_edges <span class="ot">&lt;-</span> <span class="fu">as.tibble</span>(MC1<span class="sc">$</span>links) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span> (source, target, type, weight, key)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>  MC2<span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="st">"data/mc2_challenge_graph.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="cleaning-data-for-nodes" class="level3">
+<h3 class="anchored" data-anchor-id="cleaning-data-for-nodes">Cleaning data for nodes</h3>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-fold: true</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-summary: "Show code"</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#to check data table</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(MC1_nodes, <span class="at">n =</span> <span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30 × 3
+   id                         type         country 
+   &lt;chr&gt;                      &lt;chr&gt;        &lt;chr&gt;   
+ 1 Spanish Shrimp  Carriers   company      Nalakond
+ 2 12744                      organization &lt;NA&gt;    
+ 3 143129355                  organization &lt;NA&gt;    
+ 4 7775                       organization &lt;NA&gt;    
+ 5 1017141                    organization &lt;NA&gt;    
+ 6 2591586                    organization &lt;NA&gt;    
+ 7 185040354                  organization &lt;NA&gt;    
+ 8 Faroe Islands Shrimp Shark company      Rio Isla
+ 9 341411                     organization &lt;NA&gt;    
+10 21323516                   organization &lt;NA&gt;    
+# ℹ 20 more rows</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check summary statistics of the data</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(MC1_nodes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      id                type             country         
+ Length:3428        Length:3428        Length:3428       
+ Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character  </code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Count the number of unique IDs</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    unique_id_count <span class="ot">&lt;-</span> MC1_nodes <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(id) <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">nrow</span>()</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    unique_id_count <span class="co"># this is 3417 smaller than 3428, it means there are duplicate fields to remove</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3417</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Count the number of non-NA values in each column</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">colSums</span>(<span class="fu">is.na</span>(MC1_nodes))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     id    type country 
+      0     605    2316 </code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check unique values in the "type" column</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>(MC1_nodes<span class="sc">$</span>type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "company"                "organization"           NA                      
+[4] "person"                 "location"               "political_organization"
+[7] "vessel"                 "movement"               "event"                 </code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check unique values in the "country" column</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">length</span>(<span class="fu">unique</span>(MC1_nodes<span class="sc">$</span>country))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 118</code></pre>
+</div>
+</div>
+<p><u><strong>Issues found:</strong></u></p>
+<ol type="1">
+<li>The unique_id_count (3417) is smaller than total row count (3428), and different from 3721 nodes as specified in Data notes. Hence, there are duplicate ids in the dataset. We will <strong>need to remove duplicate id</strong>.</li>
+<li>There’s <strong>no NA row for ids</strong>, however <strong>for country or for type, there are NA values.</strong> And in some cases there’s only id and <strong>both country and type value are missing</strong>. We will remove these data as a id value itself alone doesn’t provide much information.</li>
+<li>There are at least <strong>118 distinct countries possible</strong>, however the country values are not in the same format. Some are fictitious name such as “Nalakond, Rio Isla” which can’t be found in real world, while the rest of them is a country with sequence number such as “Country_271835”.</li>
+<li>In this study, we want to focus on <strong>names of entities (people and businesses) and the relationships between them</strong>, so for other type we may remove them.</li>
+</ol>
+<table class="table">
+<colgroup>
+<col style="width: 67%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type Issue</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p><strong>type “movement”</strong> doesn’t relate to people and business, it’s a movement of status changes such as membership change etc.</p>
+<p>In this study movement data will be removed.</p></td>
+<td><img src="images/movement.JPG" title="fig:" class="img-fluid" width="167" alt="movement example"></td>
+</tr>
+<tr class="even">
+<td><p>In MC_edges file, where there’<strong>s corresponding ids under movement type</strong> should be removed as well, as the relationship mapping doesn’t make sense.</p>
+<p>For example, <strong>months</strong> appear in target field, these rows should be analyasis.</p></td>
+<td><img src="images/type affected.JPG" class="img-fluid" width="379"></td>
+</tr>
+<tr class="odd">
+<td>Type “<strong>Event</strong>” doesn’t relate to people and business. We can remove them.</td>
+<td><img src="images/event.JPG" class="img-fluid" width="162"></td>
+</tr>
+<tr class="even">
+<td><p>In MC_edges file, where there’<strong>s corresponding ids under events type</strong> should be removed as well, as the relationship mapping doesn’t make sense.</p>
+<p>For example, past years appear in <strong>target</strong> field, thees rows should be removed from analyasis.</p></td>
+<td><img src="images/events values.JPG" title="fig:" class="img-fluid" alt="Value under event type appear in target"></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="cleaning-data-for-edges" class="level3">
+<h3 class="anchored" data-anchor-id="cleaning-data-for-edges">Cleaning data for edges</h3>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-fold: true</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-summary: "Show code"</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#to check data table</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(MC1_edges, <span class="at">n =</span> <span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30 × 5
+   source                   target                       type       weight   key
+   &lt;chr&gt;                    &lt;chr&gt;                        &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;
+ 1 Spanish Shrimp  Carriers 12744                        ownership   0.900     0
+ 2 Spanish Shrimp  Carriers 21323516                     partnersh…  0.846     0
+ 3 Spanish Shrimp  Carriers 290834957                    partnersh…  0.965     0
+ 4 Spanish Shrimp  Carriers 3506021                      ownership   0.964     0
+ 5 Spanish Shrimp  Carriers Conventionâ                  family_re…  0.823     0
+ 6 Spanish Shrimp  Carriers 2262                         family_re…  0.893     0
+ 7 Spanish Shrimp  Carriers Ashley Davis                 family_re…  0.839     0
+ 8 Spanish Shrimp  Carriers 924                          family_re…  0.885     0
+ 9 Spanish Shrimp  Carriers 95                           family_re…  0.887     0
+10 Spanish Shrimp  Carriers Ancla Azul Company Solutions membership  0.899     0
+# ℹ 20 more rows</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check summary statistics of the data</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(MC1_edges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    source             target              type               weight      
+ Length:11069       Length:11069       Length:11069       Min.   :0.0253  
+ Class :character   Class :character   Class :character   1st Qu.:0.8337  
+ Mode  :character   Mode  :character   Mode  :character   Median :0.8715  
+                                                          Mean   :0.8731  
+                                                          3rd Qu.:0.9148  
+                                                          Max.   :0.9923  
+      key         
+ Min.   : 0.0000  
+ 1st Qu.: 0.0000  
+ Median : 0.0000  
+ Mean   : 0.2041  
+ 3rd Qu.: 0.0000  
+ Max.   :21.0000  </code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>    <span class="co">#To find duplicate rows in the MC1_edges data frame based on the "source" and "target" and "type" columns</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">#the subset() function is used to select only the "source" and "target" columns from MC1_edges. The duplicated() function is then applied to identify rows with duplicated combinations of "source" and "target". By using the | (OR) operator with duplicated(subset(...)) and duplicated(subset(...), fromLast = TRUE), it finds both the first occurrence and the last occurrence of the duplicated rows.</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    duplicate_rows <span class="ot">&lt;-</span> MC1_edges <span class="sc">%&gt;%</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">duplicated</span>(<span class="fu">subset</span>(., <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"source"</span>, <span class="st">"target"</span>, <span class="st">"type"</span> ))) <span class="sc">|</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>           <span class="fu">duplicated</span>(<span class="fu">subset</span>(., <span class="at">select =</span> <span class="fu">c</span>(<span class="st">"source"</span>, <span class="st">"target"</span> , <span class="st">"type"</span>)), <span class="at">fromLast =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># check if there are any NA values in each column</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">colSums</span>(<span class="fu">is.na</span>(MC1_edges))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>source target   type weight    key 
+     0      0      0      0      0 </code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>(MC1_edges<span class="sc">$</span>key)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>(MC1_edges<span class="sc">$</span>type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ownership"           "partnership"         "family_relationship"
+[4] "membership"         </code></pre>
+</div>
+</div>
+<p>In edge dataset, no NA rows for each of the column. For duplicates, though the rest of the values are the same, but their key and weight are different.</p>
+</section>
+<section id="handling-missing-values-and-not-useful-value" class="level3">
+<h3 class="anchored" data-anchor-id="handling-missing-values-and-not-useful-value">Handling missing values and not useful value</h3>
+<p>By checking MC1_nodes, quite a number of rows only have id, there’s no type and country information. Delete these type of nodes as they do not add value to the analysis.</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-fold: true</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-summary: "Show code"</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># only keep distinct idS</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter out rows with NA values in both country and type columns</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  MC1_nodes_unique<span class="ot">&lt;-</span> MC1_nodes <span class="sc">%&gt;%</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(id, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(country) <span class="sc">|</span> <span class="sc">!</span><span class="fu">is.na</span>(type))</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># further filter to remove the rows in MC1_nodes_unique where the type column is either "movement" or "event"</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  MC1_nodes_cleaned <span class="ot">&lt;-</span> MC1_nodes_unique <span class="sc">%&gt;%</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"movement"</span>, <span class="st">"event"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>After filtering, only 2721 entries left in MC1_nodes_cleaned to be used in the analytics.</p>
+</section>
+<section id="data-consistency-in-entity-names-and-relationships" class="level3">
+<h3 class="anchored" data-anchor-id="data-consistency-in-entity-names-and-relationships">Data consistency in entity names and relationships</h3>
+<p>Here we need to remove rows in edge, where either source or target id is not found in nodes. Nodes id should be the Primary Key for all source/target entries in Edge, <strong>filtering is required in edge dataset to only keep source/target</strong> with the ids appeared in node dataset.</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-fold: true</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#| code-summary: "Show code"</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  MC1_edges_cleaned <span class="ot">&lt;-</span> MC1_edges <span class="sc">%&gt;%</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(source <span class="sc">%in%</span> MC1_nodes_cleaned<span class="sc">$</span>id, target <span class="sc">%in%</span> MC1_nodes_cleaned<span class="sc">$</span>id)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Review the clearned data:</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>(MC1_edges_cleaned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 6,490
+Columns: 5
+$ source &lt;chr&gt; "Spanish Shrimp  Carriers", "Spanish Shrimp  Carriers", "Spanis…
+$ target &lt;chr&gt; "12744", "21323516", "290834957", "3506021", "2262", "Ashley Da…
+$ type   &lt;chr&gt; "ownership", "partnership", "partnership", "ownership", "family…
+$ weight &lt;dbl&gt; 0.9001396, 0.8458973, 0.9648761, 0.9642126, 0.8931523, 0.839306…
+$ key    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>(MC1_nodes_cleaned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 2,721
+Columns: 3
+$ id      &lt;chr&gt; "Spanish Shrimp  Carriers", "12744", "143129355", "7775", "101…
+$ type    &lt;chr&gt; "company", "organization", "organization", "organization", "or…
+$ country &lt;chr&gt; "Nalakond", NA, NA, NA, NA, NA, NA, "Rio Isla", NA, NA, NA, "C…</code></pre>
+</div>
+</div>
+<p>The number of rows reduce from 11069 to 6490 after filtering.</p>
+</section>
+</section>
+<section id="entity-visualization" class="level2">
+<h2 class="anchored" data-anchor-id="entity-visualization">Entity Visualization</h2>
+<section id="create-the-tbl_graph-object" class="level3">
+<h3 class="anchored" data-anchor-id="create-the-tbl_graph-object">create The <strong>tbl_graph</strong> object</h3>
+<p>Using tidygraph package, we will build tidygraph network graph data.frame. The graph is directed with source and target specificed.</p>
+<p>(Planning: Display entities relationship as we focused (graph network))</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>peopleEntityRelationship <span class="ot">&lt;-</span> <span class="fu">tbl_graph</span>(<span class="at">nodes =</span> MC1_nodes_cleaned,</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">edges =</span> MC1_edges_cleaned,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">directed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  peopleEntityRelationship</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tbl_graph: 2721 nodes and 6490 edges
+#
+# A bipartite multigraph with 204 components
+#
+# A tibble: 2,721 × 3
+  id                       type         country 
+  &lt;chr&gt;                    &lt;chr&gt;        &lt;chr&gt;   
+1 Spanish Shrimp  Carriers company      Nalakond
+2 12744                    organization &lt;NA&gt;    
+3 143129355                organization &lt;NA&gt;    
+4 7775                     organization &lt;NA&gt;    
+5 1017141                  organization &lt;NA&gt;    
+6 2591586                  organization &lt;NA&gt;    
+# ℹ 2,715 more rows
+#
+# A tibble: 6,490 × 5
+   from    to type        weight   key
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;int&gt;
+1     1     2 ownership    0.900     0
+2     1    10 partnership  0.846     0
+3     1    49 partnership  0.965     0
+# ℹ 6,487 more rows</code></pre>
+</div>
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>  peopleEntityRelationship <span class="sc">%&gt;%</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">activate</span>(edges) <span class="sc">%&gt;%</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(weight))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tbl_graph: 2721 nodes and 6490 edges
+#
+# A bipartite multigraph with 204 components
+#
+# A tibble: 6,490 × 5
+   from    to type                weight   key
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                &lt;dbl&gt; &lt;int&gt;
+1  1186     3 partnership          0.987     0
+2   912  1345 ownership            0.986     0
+3  1696  2009 membership           0.985     0
+4  1397   748 family_relationship  0.984     0
+5   341     3 partnership          0.984     0
+6  2035  2032 partnership          0.983     0
+# ℹ 6,484 more rows
+#
+# A tibble: 2,721 × 3
+  id                       type         country 
+  &lt;chr&gt;                    &lt;chr&gt;        &lt;chr&gt;   
+1 Spanish Shrimp  Carriers company      Nalakond
+2 12744                    organization &lt;NA&gt;    
+3 143129355                organization &lt;NA&gt;    
+# ℹ 2,718 more rows</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="interactive-exploration" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-exploration">Interactive Exploration</h2>
+<p>(Planning: Interactive Exploration: Develop an interactive interface that allows analysts to explore the entities and their context dynamically. Enable functionalities like filtering, highlighting, and zooming to focus on specific entities or connections of interest. This interactive approach will help analysts identify patterns, anomalies, and potential links to illegal fishing more efficiently.)</p>
+<div class="cell">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ggraph(peopleEntityRelationship, layout="sparse") +  #</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># geom_edge_link() +</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># geom_node_point()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section"></h2>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
