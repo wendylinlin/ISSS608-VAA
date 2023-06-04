@@ -4,4 +4,4 @@ title: "ISSS608-VAA Lin Lin"
 
 Welcome to **ISSS 608 Visual analytics and application**.
 
-In this website, you will find my coursework prepared for this course.
+This website has my coursework prepared under this course.
