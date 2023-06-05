@@ -35,8 +35,9 @@ First, load the library and read the json relationship file MC2.
 
 ```{r loadData}
   #Load Libraries
-  pacman::p_load(jsonlite,tidygraph, ggraph, visNetwork, tidyverse, shiny, plotly, ggtern)
-
+  pacman::p_load(jsonlite,tidygraph, ggraph, visNetwork, tidyverse, shiny, plotly, ggtern, ggthemes)
+```
+```{r}
   #load Data
   #If we already have jsonlite, we don't need it anymore
   MC2<- fromJSON("data/mc2_challenge_graph.json")
@@ -208,7 +209,8 @@ With above understanding, we select the desired data by filter the data with HSC
     target %in% MC2_nodes_cleaned$id,
     grepl("^30[1-8]|^160[3-5]", hscode)
   ) %>%
-  mutate(Year = format(as.Date(arrivaldate), "%Y"))
+  mutate(Year = format(as.Date(arrivaldate), "%Y"),
+    Month = format(as.Date(arrivaldate), "%m"))
   
 ```
 
@@ -269,13 +271,12 @@ Below is Interactive Exploration section, it is an interactive interface that al
     output$timePlotVolume <- renderPlot({
       # Filter the data based on the selected company
       selected_data1 <- MC2_edges_maritime %>%
-        filter(source == input$companyInput)
-     
-      # Group by date and calculate total TEU value
-      selected_data1 <- selected_data1 %>%
+        filter(source == input$companyInput) %>%
         group_by(arrivaldate) %>%
         summarise(TotalValue = sum(volumeteu, na.rm = TRUE))
-      #troubleshooting use:
+      # Group by date and calculate total TEU value
+
+            #troubleshooting use:
       # print(selected_data1)
   
       # Generate the plot
@@ -303,6 +304,32 @@ Below is Interactive Exploration section, it is an interactive interface that al
   
   shinyApp(ui = ui, server = server)
 
+```
+
+
+```{r heatmap}
+  grouped <- MC2_edges_maritime %>% 
+  count(Year, Month) %>% 
+  ungroup() %>%
+  na.omit()
+
+  ggplot(grouped, 
+         aes(Month,Year, 
+             fill = n)) + 
+  geom_tile(color = "white", 
+            size = 0.1) + 
+  theme_tufte(base_family = "Helvetica") + 
+  coord_equal() +
+  scale_fill_gradient(name = "# of attacks",
+                      low = "sky blue", 
+                      high = "dark blue") +
+  labs(x = NULL, 
+       y = NULL, 
+       title = "Transaction by Year and Month") +
+  theme(axis.ticks = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6) )
 ```
 
 ### Further understanding with HSCODE and HSCODE CATEGORIES
