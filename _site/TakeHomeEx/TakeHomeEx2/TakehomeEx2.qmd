@@ -37,6 +37,7 @@ First, load the library and read the json relationship file MC2.
   #Load Libraries
   pacman::p_load(jsonlite,tidygraph, ggraph, visNetwork, tidyverse, shiny, plotly, ggtern, ggthemes)
 ```
+
 ```{r}
   #load Data
   #If we already have jsonlite, we don't need it anymore
@@ -95,13 +96,10 @@ Here we inspect the raw data loaded, check the unique values and NA values in th
 
 1.  There's **no NA row for ids**, however **for shpcountry** (country associated when shipping) **and rcvcountry** （country associated when receiving)
 
-    +----------------+--------------------+--------------------------------------------------+
     | Column name    | Missing Value Rows | Percentage of Missing Value against full dataset |
-    +================+====================+==================================================+
+    |----------------|--------------------|--------------------------------------------------|
     | **shpcountry** | 22359              | 22359/34,576 = 64.67%                            |
-    +----------------+--------------------+--------------------------------------------------+
     | **rcvcountry** | 2909               | 2909/34,576 = 8.41%                              |
-    +----------------+--------------------+--------------------------------------------------+
 
 ### filter out missing values for nodes on raw data
 
@@ -164,33 +162,22 @@ Further more, **in terms of HSCODE, only chapter 03 and chatper 16 has maritime 
 
 Based on knowledge from HSCODE classification - [HSN Code 3 - HS codes of Fish, crustaceans, molluscs, aquatic invertebrates ne (connect2india.com)](https://connect2india.com/hs-codes-directory/hs-code-3), we can interpret the HSCODE major categories by the code initials
 
-+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | HSCODE Initial | Chapter Meaning                                                                                                                                                                                                                                                                                                                                                                                                                   |
-+================+===================================================================================================================================================================================================================================================================================================================================================================================================================================+
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 301            | Live Fish                                                                                                                                                                                                                                                                                                                                                                                                                         |
-+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | 302            | Fish, fresh or chilled, whole                                                                                                                                                                                                                                                                                                                                                                                                     |
-+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | 303            | Fish, frozen, whole                                                                                                                                                                                                                                                                                                                                                                                                               |
-+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | 304            | Fish fillets, fish meat, mince except liver, roe                                                                                                                                                                                                                                                                                                                                                                                  |
-+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | 305            | Fish,cured, smoked, fish meal for human consumption                                                                                                                                                                                                                                                                                                                                                                               |
-+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | 306            | Crustaceans                                                                                                                                                                                                                                                                                                                                                                                                                       |
-+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | 307            | Molluscs                                                                                                                                                                                                                                                                                                                                                                                                                          |
-+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | 308            | Fish and crustaceans, molluscs and other aquatic invertebrates Aquatic invertebrates other than crustaceans and molluscs, live, fresh, chilled, frozen, dried, salted or in brine smoked aquatic invertebrates other than crustaceans and molluscs, whether or not cooked before or during the smoking process flours, meals and pellets of aquatic invertebrates other than crustaceans and molluscs, fit for human consumption. |
-+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-+-------------------------------------------------------------------+-------------------------------------------------------+
+|                                                                   |                                                       |
+|-------------------------------------------------------------------|-------------------------------------------------------|
 | [1604](https://connect2india.com/hs-codes-directory/hs-code-1604) | Prepared or preserved fish, fish eggs, caviar         |
-+-------------------------------------------------------------------+-------------------------------------------------------+
 | [1603](https://connect2india.com/hs-codes-directory/hs-code-1603) | Extracts, juices of meat, fish, aquatic invertebrates |
-+-------------------------------------------------------------------+-------------------------------------------------------+
 | [1605](https://connect2india.com/hs-codes-directory/hs-code-1605) | Crustaceans, molluscs, etc, prepared or preserved     |
-+-------------------------------------------------------------------+-------------------------------------------------------+
 
 With above understanding, we select the desired data by filter the data with HSCODE either start with 301 - 308, or start with 1603-1605. And we drop valueofgoods_omu, remove NA fields in other columns.
 
@@ -305,7 +292,6 @@ Below is Interactive Exploration section, it is an interactive interface that al
   shinyApp(ui = ui, server = server)
 
 ```
-
 
 ```{r heatmap}
   grouped <- MC2_edges_maritime %>% 
@@ -485,7 +471,6 @@ With all the above exploration, we will know that the top Category interms of Vo
 
 From both plot above, value of goods USD seems always low and didn't change linearly with the weight or volume teu.
 
-
 To investigate the maritime data, we aggregate them based on HSCODE, and understand which are the item that are frequently being traded (there will be higher count of HSCODE) and which are less popular items.
 
 ```{r productTradeCharacter}
@@ -650,14 +635,10 @@ Here we try clustering and use parallelogram to check the result
 
 
 ```
-Insights: 
 
-We can see that:
-cluster 1 has high betweenness centrality but low in all other values ==> These are probably transhipment nodes
-Cluster 3 has median betweenness centrality value as well as degree centrality value ==> These are probably whole seller
-Cluster 2 may need further breakdown as some of them are high in eigen value, some are high in in degree centrality, some are high in out degree centrality.We will make some inference based on the connectivity
+Insights:
 
-
+We can see that: cluster 1 has high betweenness centrality but low in all other values ==\> These are probably transhipment nodes Cluster 3 has median betweenness centrality value as well as degree centrality value ==\> These are probably whole seller Cluster 2 may need further breakdown as some of them are high in eigen value, some are high in in degree centrality, some are high in out degree centrality.We will make some inference based on the connectivity
 
 ```{r interactiveClusterPlot}
   #Failed, no legend displayed 
@@ -721,11 +702,9 @@ Cluster 2 may need further breakdown as some of them are high in eigen value, so
 
 ```
 
-
 ## Interactive Network Graph with visNetwork
 
 Due to the data size, we will only plot for HSCODE starting with 1604 or 304, and look at the nodes with their business patterns.
-
 
 ```{r focusOnTopCategory}
   mc2_edges_maritime_focused <- MC2_edges_maritime %>%
@@ -783,6 +762,7 @@ Due to the data size, we will only plot for HSCODE starting with 1604 or 304, an
 ```
 
 ## Other Analysis
+
 Ny ploting boxplot for maritime data, We can see that **there are some outlier values in terms of weightkg and valueofgoodsusd.** Use boxplot to visualize the outlier values
 
 ```{r}
@@ -885,7 +865,6 @@ With the above analysis, **this company draws our attention, the only good it sh
 ```
 
 From the above network diagram, we can see that this company start small in 2029, then find some other source of Tuna in 2030, and between 2031 to 2034 it's trying to get the supply from multiple supplier while maintain 1 dominant supplier unchanged.
-
 
 Here we **need to remove rows in edge, where either source or target id is not found in nodes.** Nodes id should be the Primary Key for all source/target entries in Edge, **filtering is required in edge dataset to only keep source/target** with the ids appeared in node dataset.
 
@@ -1058,10 +1037,8 @@ Here we selected Tuna (160414) as an example. we try to check for the rest of th
 #              nodesIdSelection = TRUE)
 ```
 
+## Others - For future reference
 
-
-
-## Others - For future reference 
 By looking at the edge data, each company may have transaction with another company multiple times with differnt timing and different volume/value of goods. Since there's time information in MC2_edges, we will aggregate the values to form some counts of values before we form the network graph.
 
 ```{r}
@@ -1087,4 +1064,3 @@ By looking at the edge data, each company may have transaction with another comp
   # View the aggregated data
   print(aggregated_data)
 ```
-
