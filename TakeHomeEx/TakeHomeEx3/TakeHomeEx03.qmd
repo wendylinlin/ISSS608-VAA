@@ -28,7 +28,7 @@ Load the library and read the json relationship file MC2.
   #echo | false
   #tidytext -- text mining library with R: https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html
   #Load Libraries   
-  pacman::p_load(jsonlite,tidygraph, ggraph, visNetwork, tidyverse, shiny, plotly, graphlayouts, ggforce, tidytext)   
+  pacman::p_load(jsonlite,tidygraph, ggraph, visNetwork, tidyverse, shiny, plotly, graphlayouts, ggforce, tidytext,skimr)   
   #load Data   
   MC3<- fromJSON("data/MC3.json")
 ```
@@ -37,24 +37,71 @@ Pick desired fields in MC3
 
 We picked the desired fields and reorganized the columns **using select function.** The nodes in MC3 will be companies or person, and description about companies, with their product and services, country and revenue generated.
 
-As we load the data, we found this diagram is not directed, so we will not know the in/out direction of connection. We will take out the nodes and edges out for further processing.
+As we load the data, we found this diagram is **not directed**, so we will not know the in/out direction of connection.
 
-```{r dataCleaning}
+Below code extract out nodes and edges out for further processing.
+
+```{r extractNodes}
 
   #glimpse(MC3)
-
-  MC3_nodes <- as_tibble(MC3$nodes) 
-  unique(MC3_nodes$type)
+  MC3_nodes <- as_tibble(MC3$nodes)
   colSums(is.na(MC3_nodes))
-    
-  MC3_edges <- as_tibble(MC3$links) %>%
-  select (source,target,type) %>%
-  distinct()
-  unique(MC3_edges$type)
+
+  #extract and mutate the format so it's not list but dataframe
+  MC3_nodes_clean <- MC3_nodes %>% mutate(country = as.character(country),
+                                          id = as.character(id),
+                                          product_services = as.character(product_services),
+                                          revenue_omu = as.numeric(as.character(revenue_omu)),    #we need to convert to numeric directly
+                                          type = as.character(type)) %>%
+    select(id, country, type, revenue_omu, product_services)
+  
+ 
+ 
+  
+```
+
+```{r nodesExplore}
+  #check data quality
+  colSums(is.na(MC3_nodes_clean))
+  #check which are the types?
+  unique(MC3_nodes_clean$type)
+  skim(MC3_nodes_clean)
+  DT::datatable(MC3_nodes_clean)
+```
+
+```{r extractEdges}
+  
+  MC3_edges <- as_tibble(MC3$links) %>% 
+  distinct() %>%
+  mutate(source = as.character(source),
+         target = as.character(target),
+         type = as.character(type)) %>%
+  group_by(source, target, type) %>%
+    summarise(weights = n()) %>%
+  filter(source!=target) %>%
+  ungroup()
+  
+  
+  #check missing value
   colSums(is.na(MC3_edges))
 ```
 
-With the loaded data MC3_edges, the data is loaded as list rather than a data frame format. Mutate and rearrange the data to data frame
+There is no missing value in edges data. Explore the dataset.
+
+```{r edgeExplore}
+  DT::datatable(MC3_edges)
+  #check which are the types?
+  unique(MC3_edges$type)
+  #datatable() of DT package is used to display mc3_edges tibble data frame as an interactive table on the html document.
+```
+
+In order to find the business group, we will check the type of different category of data. There might be owner - business, customer - business, business - business relationship
+
+```{r }
+  ggplot(data = MC3_edges,
+       aes(x = type)) +
+  geom_bar()
+```
 
 ```{r tidyData}
   MC3_edges_clean <- MC3_edges %>% mutate(source = as.character(source),
@@ -65,12 +112,7 @@ With the loaded data MC3_edges, the data is loaded as list rather than a data fr
   filter(source!=target) %>%
   ungroup()
 
-  MC3_nodes_clean <- MC3_nodes %>% mutate(country = as.character(country),
-                                          id = as.character(id),
-                                          product_services = as.character(product_services),
-                                          revenue_omu = as.numeric(as.character(revenue_omu)),    #we need to convert to numeric directly
-                                          type = as.character(type)) %>%
-    select(id, country, type, revenue_omu, product_services)
+ 
   
 ```
 
@@ -78,9 +120,50 @@ Handling missing values: for some or the product/services, there's blank value s
 
 ![](images/Issue%20in%20data.JPG)
 
-In order to find the business group, we will check the type of different category of data. There might be owner - business, customer - business, business - business relationship
+```{r}
+  # Recode "character(0)" to NA in the product_services column
+  MC3_nodes_clean$product_services[MC3_nodes_clean$product_services == "character(0)"] <- NA
+  
+  ggplot(data = MC3_nodes_clean,
+         aes(x = type)) +
+    geom_bar()
+
+```
+
+Building network model with tidygraph
+
+```{r syncUpNodeAndEdge}
+  id1 <- MC3_edges_clean %>%
+  select(source) %>%
+  rename(id = source)
+  id2 <- MC3_edges_clean %>%
+    select(target) %>%
+    rename(id = target)
+  MC3_nodes1 <- rbind(id1, id2) %>%
+    distinct() %>%
+    left_join(MC3_nodes_clean,
+              unmatched = "drop")
+```
+
+```{r calculateGraphWithBetweenness}
+  mc3_graph <- tbl_graph(nodes = MC3_nodes1,
+                       edges = MC3_edges_clean,
+                       directed = FALSE) %>%
+  mutate(betweenness_centrality = centrality_betweenness(),
+         closeness_centrality = centrality_closeness())
+```
 
 ```{r}
+  mc3_graph %>%
+  filter(betweenness_centrality >= 100000) %>%
+  ggraph(layout = "fr") +
+    geom_edge_link(aes(alpha=0.5)) +
+    geom_node_point(aes(
+      size = betweenness_centrality,
+      colors = "lightblue",
+      alpha = 0.5)) +
+    scale_size_continuous(range=c(1,10))+
+    theme_graph()
 ```
 
 ### Text sensing with tidytext
@@ -88,29 +171,74 @@ In order to find the business group, we will check the type of different categor
 #### word count
 
 ```{r simpleWordCount}
-  #start a bit of text sensing
-  MC3_nodes_clean 
+  #start a bit of text sensing, display the result by max value first
+
+  MC3_nodes_clean <- MC3_nodes_clean %>% 
+  mutate(n_fish = str_count(product_services, "fish")) %>%
+  arrange(desc(n_fish))
+
+  library(ggplot2)
+
+  # MC3_nodes_clean <- MC3_nodes_clean %>%
+  #   group_by(type) %>%
+  #   summarize(n_fish = sum(str_count(product_services, "fish")), .groups = "drop")
+  
+  ggplot(data = MC3_nodes_clean, aes(x = type, y = n_fish)) +
+  geom_bar(stat = "identity")
+
 ```
 
 ### Tokenisation
 
+In text sensing, tokenisation is the process of **breaking up a given text** into units called tokens. We will discard characters like punctuation marks in this progress.
+
+The two basic arguments to unnest_tokens() used here are column names. First argument is **the output column name** that will be created as the text is unnested into it, and then the **input column that the text comes from** (product_services, in this case).
+
 ```{r tokenization}
-  tidy_nodes <- MC3_nodes_clean %>%
+  nodesToken <- MC3_nodes_clean %>%
   unnest_tokens (word, product_services)
   #can add in to_lower = TRUE
   # add in strip_punct = TRUE
+
 ```
 
-from the token generated, we need to take out the common/generic words.
+```{r visualizeTextSensingWord}
+  nodesToken %>%
+  count(word, sort = TRUE) %>%
+  top_n(15) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+      labs(x = "Count",
+      y = "Unique words",
+      title = "Count of unique words found in product_services field")
+```
+With above we saw the top frequently sensed word may not be useful. For example, NA,  “a” and “to”. We will need to remove these words as stop words. 
+
+From the token generated, we need to take out the common/generic words and we will also exclude NA records.
 
 ```{r stopwordsRemove}
-  tidy_stopwords <- tidy_nodes %>%
-  anti_join(stop_words)
+  tidy_stopwords <- nodesToken %>%
+  anti_join(stop_words)%>%
+  na.omit()
 ```
 
-### Visualization with bar chart
+### Visualization with bar chart after remove stopword
 
-```{r}
+```{r removeStopWordPlot}
+  tidy_stopwords %>%
+  count(word, sort = TRUE) %>%
+  top_n(15) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+      labs(x = "Count",
+      y = "Unique words",
+      title = "Count of unique words found in product_services field")
     
 ```
 
