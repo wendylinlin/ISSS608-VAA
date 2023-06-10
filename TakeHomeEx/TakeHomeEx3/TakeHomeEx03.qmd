@@ -20,7 +20,7 @@ Task 2: Develop a visual analytics process to find similar businesses and group 
   #we need to find groups and business groups, we have to do a bit of text sensing
 ```
 
-## Data Pre-processing
+## Data Pre-processing and cleaning
 
 Load the library and read the json relationship file MC2.
 
@@ -33,7 +33,7 @@ Load the library and read the json relationship file MC2.
   MC3<- fromJSON("data/MC3.json")
 ```
 
-Pick desired fields in MC3
+### Pick desired fields in MC3
 
 We picked the desired fields and reorganized the columns **using select function.** The nodes in MC3 will be companies or person, and description about companies, with their product and services, country and revenue generated.
 
@@ -54,14 +54,13 @@ Below code extract out nodes and edges out for further processing.
                                           revenue_omu = as.numeric(as.character(revenue_omu)),    #we need to convert to numeric directly
                                           type = as.character(type)) %>%
     select(id, country, type, revenue_omu, product_services)
-  
- 
- 
-  
+
 ```
 
+The original data do not have NA value, however by transforming data into table format, some fields are NA.
+
 ```{r nodesExplore}
-  #check data quality
+  #check data quality=
   colSums(is.na(MC3_nodes_clean))
   #check which are the types?
   unique(MC3_nodes_clean$type)
@@ -215,7 +214,8 @@ The two basic arguments to unnest_tokens() used here are column names. First arg
       y = "Unique words",
       title = "Count of unique words found in product_services field")
 ```
-With above we saw the top frequently sensed word may not be useful. For example, NA,  “a” and “to”. We will need to remove these words as stop words. 
+
+With above we saw the top frequently sensed word may not be useful. For example, NA, "a" and "to". We will need to remove these words as stop words.
 
 From the token generated, we need to take out the common/generic words and we will also exclude NA records.
 
