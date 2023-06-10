@@ -184,6 +184,9 @@ Building network model with tidygraph
   
   ggplot(data = MC3_nodes_clean, aes(x = type, y = n_fish)) +
   geom_bar(stat = "identity")
+  
+  ggplot(data = MC3_nodes_clean, aes(x = type, y = revenue_omu)) +
+  geom_bar(stat = "identity")
 
 ```
 
