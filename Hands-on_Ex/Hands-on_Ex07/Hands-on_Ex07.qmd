@@ -11,7 +11,8 @@ editor: visual
   #echo | False
   pacman::p_load(scales, viridis, lubridate, ggthemes, gridExtra, readxl, knitr, data.table, CGPfunctions, ggHoriPlot, tidyverse)
 ```
-###  Importing the data
+
+### Importing the data
 
 Loading data from the data file
 
@@ -19,11 +20,8 @@ Loading data from the data file
   attacks <- read_csv("data/eventlog.csv")
 
 ```
-Examining the data structure by using kable(), review the structure of the imported data frame.
-Data information:
-- timestamp field stores date-time values in POSIXct format.
-- source_country field stores the source of the attack. It is in ISO 3166-1 alpha-2 country code.
-- tz field stores time zone of the source IP address.
+
+Examining the data structure by using kable(), review the structure of the imported data frame. Data information: - timestamp field stores date-time values in POSIXct format. - source_country field stores the source of the attack. It is in ISO 3166-1 alpha-2 country code. - tz field stores time zone of the source IP address.
 
 ```{r}
   #| echo: false
@@ -31,8 +29,9 @@ Data information:
 
 
 ```
+
 ### Data Preparation
- 
+
 Step 1: Deriving weekday and hour of day fields
 
 Before we can plot the calender heatmap, two new fields namely wkday and hour need to be derived. In this step, we will write a function to perform the task.

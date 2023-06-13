@@ -7,20 +7,44 @@ author: "Lin Lin"
 
 FishEye International, a non-profit focused on countering illegal, unreported, and unregulated (IUU) fishing, has been given access to an international finance corporation's database on fishing related companies. In the past, **FishEye has determined that companies with anomalous structures are far more likely to be involved in IUU** (or other "fishy" business). FishEye has transformed the database into a knowledge graph. It includes information **about companies, owners, workers, and financial status.** FishEye is aiming to use this graph to identify anomalies that could indicate a company is involved in IUU.
 
-FishEye analysts have attempted to use **traditional node-link visualizations and standard graph analyses, but these were found to be ineffective because the scale and detail in the data can obscure a business's true structure.** The research below aim to **help FishEye develop a new visual analytics approach to better understand fishing business anomalies**.
+FishEye analysts have attempted to use **traditional node-link visualizations and standard graph analyses, but these were found to be ineffective because the scale and detail in the data can obscure a business's true structure.**
+
+*The research below aim to **help FishEye develop a new visual analytics approach to better understand fishing business anomalies**.*
 
 We will use visual analytics to understand patterns of groups in the knowledge graph and highlight anomalous groups.
 
 Task 1: Use visual analytics to identify anomalies in the **business groups** present in the knowledge graph.
 
-Task 2: Develop a visual analytics process to find similar businesses and group them. This analysis should focus on a business's most important features and present those features clearly to the user.
+Task 2: Develop a visual analytics process to **find similar businesses and group them**. This analysis should focus on a business's most important features and present those features clearly to the user.
 
 ```{r background information}
-  #The grouping will be done visually
-  #we need to find groups and business groups, we have to do a bit of text sensing
+  #Steps planning
+  # 1. Load and process knowledge graph Data
+  # 1.1 Data Cleaning, handling missing value, transforming data, select desired columns
+
+  # 2. Focus on Fish related companies
+  #Since we are going to focus on fishing business anomalies, we will need to filter out the subset of data relate to fishing activities.  We have to do a bit of text sensing
+  ## 2.1 Word tokenization for business key activity extraction, then filter for fishing related only
+  ## 2.2. Transform the business relationship by counting company to company, company to owner, company to contact information etc,  categorize relationship manually, give some labels
+  # Then among the business groups, we can do exploratary analysis on the relationship, explore those with top number of connections
+
+  # 3. Visualizing pattern of groups
+  # 3.1 Apply clustering algorithms to identify groups of related entities within the knowledge graph. Use techniques such as community detection algorithms (e.g., Louvain algorithm) to detect clusters.
+  # 3.2 Visualize the identified groups using appropriate visualizations, such as a network graph or a dendrogram, to understand the patterns and relationships among the groups.
+
+  # 4. Identifying anomalies in business groups:
+
+   #4.1 Try to define anomaly detection metrics based on known characteristics of IUU fishing companies. Can consider things like the number of connections, financial transactions, or unusual ownership structures.
+  # Calculate the anomaly scores for each business group based on the defined metrics. Use appropriate statistical techniques or anomaly detection algorithms like Isolation Forest or Local Outlier Factor. R packages like anomalyDetection and outliers can be used for this purpose.
+
+  # 5. Measuring similarity and expressing confidence in groupings:
+
+  # Calculate similarity scores or distances between businesses within each group using appropriate similarity measures, such as cosine similarity or Euclidean distance.
+  # Visualize the similarity measures to express confidence in the groupings. May use Heatmaps or dendrograms
+ 
 ```
 
-## Data Pre-processing and cleaning
+## 1. Data Pre-processing and cleaning
 
 Load the library and read the json relationship file MC2.
 
@@ -33,7 +57,7 @@ Load the library and read the json relationship file MC2.
   MC3<- fromJSON("data/MC3.json")
 ```
 
-### Pick desired fields in MC3
+### Data Cleaning for MC3 Nodes and Edges
 
 We picked the desired fields and reorganized the columns **using select function.** The nodes in MC3 will be companies or person, and description about companies, with their product and services, country and revenue generated.
 
@@ -47,7 +71,7 @@ Below code extract out nodes and edges out for further processing.
   MC3_nodes <- as_tibble(MC3$nodes)
   colSums(is.na(MC3_nodes))
 
-  #extract and mutate the format so it's not list but dataframe
+  #Extract and mutate the format so it's not list but dataframe
   MC3_nodes_clean <- MC3_nodes %>% mutate(country = as.character(country),
                                           id = as.character(id),
                                           product_services = as.character(product_services),
@@ -60,13 +84,41 @@ Below code extract out nodes and edges out for further processing.
 The original data do not have NA value, however by transforming data into table format, some fields are NA.
 
 ```{r nodesExplore}
-  #check data quality=
+  #check data quality, find missing value
   colSums(is.na(MC3_nodes_clean))
   #check which are the types?
-  unique(MC3_nodes_clean$type)
+  # unique(MC3_nodes_clean$type)
   skim(MC3_nodes_clean)
-  DT::datatable(MC3_nodes_clean)
 ```
+
+Out of the total Nodes 21515 out of 27622 rows do not have value for revenue_omu. The ratio of missing value in revenue_omu is 77.9%. **We will need to deal with this Missing values.**
+And there are 22929 out of 27622 rows have unique ids, there are duplicates with id. The ratio of non-duplicate id is 83.0%.
+
+```{r nodeRemoveDuplicate}
+  #check which are the duplicate ids
+  duplicate_ids <- MC3_nodes_clean[duplicated(MC3_nodes_clean$id), "id"]
+ 
+  # Create a data frame to store the duplicate IDs and corresponding rows
+  duplicate_records <- data.frame(id = character(),
+                                country = character(),
+                                type = character(),
+                                revenue_omu = character(),
+                                product_services = character(),
+                                stringsAsFactors = FALSE)
+  
+  # Applying filtering to remove duplicates
+  # If two rows with duplicate id but with different value in any other 4 columns (country, type, revenue_omu, product_services), keep the duplicate id rows
+  # if two rows with duplicate id and same value in all other 4 columns (country, type, revenue_omu, product_services), remove the duplicate id row, only keep 1 such row.
+  #use R base function to achieve this
+  MC3_nodes_clean_noDup <- MC3_nodes_clean[!duplicated(MC3_nodes_clean), ]
+  duplicate_ids_clean <- MC3_nodes_clean_noDup[duplicated(MC3_nodes_clean_noDup$id), "id"]
+
+  
+  DT::datatable(MC3_nodes_clean)
+  
+```
+
+
 
 ```{r extractEdges}
   

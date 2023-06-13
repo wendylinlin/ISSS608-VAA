@@ -1,0 +1,258 @@
+---
+title: "Hnads-on_Ex08"
+author: "LIN LIN"
+---
+
+This exercise is about Geographic Data
+
+# **Choropleth Mapping with R**
+
+Reference book: https://r4va.netlify.app/chap21.html
+
+Definition: Choropleth mapping involves the symbolisation of enumeration units, such as countries, provinces, states, counties or census units, using area patterns or graduated colors.
+
+Useful packages:
+
+the key R package use is [**tmap**](https://cran.r-project.org/web/packages/tmap/) package in R. Beside **tmap** package, four other R packages will be used. They are:
+
+-   [**readr**](https://readr.tidyverse.org/) for importing delimited text file,
+
+-   [**tidyr**](https://tidyr.tidyverse.org/) for tidying data,
+
+-   [**dplyr**](https://dplyr.tidyverse.org/) for wrangling data and
+
+-   [**sf**](https://cran.r-project.org/web/packages/sf/) for handling geospatial data.
+
+-   **readr**, **tidyr** and **dplyr** are part of **tidyverse** package.
+
+```{r loadLibrary}
+  pacman::p_load(sf, tmap, tidyverse)
+```
+
+## Dataset used
+
+Two data set will be used to create the choropleth map. They are:
+
+-   Master Plan 2014 Subzone Boundary (Web) (i.e. `MP14_SUBZONE_WEB_PL`) in **ESRI shapefile format.** It can be downloaded at [data.gov.sg](https://data.gov.sg/) This is a **geospatial data**. It consists of the **geographical boundary of Singapore at the planning subzone level**. The data is based on **URA Master Plan 2014.** *(This is the ground fact supporting the geo plot)*
+
+-   Singapore Residents by **Planning Area / Subzone, Age Group, Sex and Type of Dwelling**, June 2011-2020 in csv format (i.e. `respopagesextod2011to2020.csv`). This is an aspatial data fie. It can be downloaded at [Department of Statistics, Singapore](https://www.singstat.gov.sg/) Although it does not contain any coordinates values, but it's PA and SZ fields can be used as unique identifiers to geocode to `MP14_SUBZONE_WEB_PL` shapefile. *(This is the dataset we wish to plot against the geo data)*
+
+### **Importing Geospatial Data into R**
+
+Below code uses the st_read() function of sf package to import MP14_SUBZONE_WEB_PL shapefile into R as a simple feature data frame called mapSubzone.
+
+```{r loadGeoData}
+  mapSubzone <- st_read(dsn = "data/geospatial", 
+                layer = "MP14_SUBZONE_WEB_PL")
+  mapSubzone
+```
+
+### Importing Attribute Data into R
+
+```{r readAttributeData}
+  popdata <- read_csv("data/aspatial/respopagesextod2011to2020.csv")
+```
+
+## Data preparation
+
+prepare a data table **with year 2020 values**. The data table should include the variables PA, SZ, YOUNG, ECONOMY ACTIVE, AGED, TOTAL, DEPENDENCY.
+
+-   YOUNG: age group 0 to 4 until age groyup 20 to 24,
+
+-   ECONOMY ACTIVE: age group 25-29 until age group 60-64,
+
+-   AGED: age group 65 and above,
+
+-   TOTAL: all age group,
+
+-   DEPENDENCY: the ratio between young and aged against economy active group
+
+## Data wrangling
+
+The following data wrangling and transformation functions will be used:
+
+**pivot_wider**() of tidyr package, and mutate(), filter(), group_by() and select() of dplyr package
+
+-   **pivot_wider**() - this pivot the table with age and different population
+
+-   Use mutate to calculate population around different age group and give them label
+
+```{r}
+popdata2020 <- popdata %>%
+  filter(Time == 2020) %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup()%>%
+  pivot_wider(names_from=AG, 
+              values_from=POP) %>%
+  mutate(YOUNG = rowSums(.[3:6])
+         +rowSums(.[12])) %>%
+  mutate(`ECONOMY ACTIVE` = rowSums(.[7:11])+
+  rowSums(.[13:15]))%>%
+  mutate(`AGED`=rowSums(.[16:21])) %>%
+  mutate(`TOTAL`=rowSums(.[3:21])) %>%  
+  mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)
+  /`ECONOMY ACTIVE`) %>%
+    select(`PA`, `SZ`, `YOUNG`, 
+         `ECONOMY ACTIVE`, `AGED`, 
+         `TOTAL`, `DEPENDENCY`)
+
+```
+
+#### Joining the attribute data and geospatial data
+
+Before we can perform the georelational join, one extra step is required to **convert the values in PA and SZ fields to uppercase.** This is because the **values of PA and SZ fields are made up of upper- and lowercase**. On the other, and the SUBZONE_N and PLN_AREA_N are in uppercase. （**Before we join the table, the cases need to be the same so values can match）**
+
+left_join() of dplyr is used to join the geographical data and attribute table using planning subzone name e.g. \*\* SUBZONE_N and SZ as the common identifier. \*\*
+
+```{r convert and Join}
+  popdata2020 <- popdata2020 %>%
+  mutate_at(.vars = vars(PA, SZ), 
+          .funs = funs(toupper)) %>%
+  filter(`ECONOMY ACTIVE` > 0)
+
+   mpsz_pop2020 <- left_join(mapSubzone, popdata2020,
+                          by = c("SUBZONE_N" = "SZ"))
+```
+
+left_join() of dplyr package is used with mpsz simple feature data frame as the left data table is to ensure that the output will be a simple features data frame.
+
+We then save the dataset to mpszpop2020.rds
+
+```{r saveValue}
+  write_rds(mpsz_pop2020, "data/rds/mpszpop2020.rds")
+```
+
+# **Choropleth Mapping Geospatial Data Using *tmap***
+
+Two approaches can be used to prepare thematic map using *tmap*, they are:
+
+-   Plotting a **thematic map quickly by using *qtm()*.**
+
+-   Plotting **highly customisable thematic map by using tmap** elements.
+
+## Cartographic standard choropleth map 
+
+```{r simpleQTM}
+  tmap_mode("plot")
+  qtm(mpsz_pop2020, 
+    fill = "DEPENDENCY")
+```
+
+Things to learn from the code chunk above:
+
+-   *tmap_mode()* with "plot" option is **used to produce a static map**. For **interactive mode, "view" option should be used**.
+
+-   ***fill*** **argument is used to map the attribute** (i.e. DEPENDENCY)
+
+## Customize choropleth map by using tmap's elements
+
+Despite its usefulness of drawing a choropleth map quickly and easily, the disadvantge of qtm() is that it makes aesthetics of individual layers harder to control. **To draw a high quality cartographic choropleth map as shown in the figure below, tmap's drawing elements should be used.**
+
+```{r customizeMap}
+  tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha =0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
+             position = c("left", "bottom"))
+```
+
+### Breaking down of customize map steps
+
+1.  Drawing a base map The basic building block of tmap is tm_shape() followed by one or more layer elemments such as tm_fill() and tm_polygons().
+
+In the code chunk below, tm_shape() is used to define the input data (i.e mpsz_pop2020) and tm_polygons() is used to draw the planning subzone polygons
+
+```{r polygons}
+  tm_shape(mpsz_pop2020) +
+  tm_polygons()
+```
+
+2.  Drawing a choropleth map using tm_polygons()
+
+To draw a choropleth map showing the geographical distribution of a selected variable by planning subzone, we just need to assign the target variable such as Dependency to tm_polygons().
+
+```{r choroplethPolygons}
+  tm_shape(mpsz_pop2020)+
+  tm_polygons("DEPENDENCY")
+```
+
+-   The default interval binning used to draw the choropleth map is called "pretty".
+
+    -   A detailed discussion of the data classification methods supported by tmap can be see in below section.
+
+-   The default colour scheme used is YlOrRd of ColorBrewer.
+
+    -   By default, Missing value will be shaded in grey.
+
+### Drawing a choropleth map using tm_fill() and \*tm_border()\*\*
+
+Actually, **tm_polygons() is a wraper of tm_fill() and tm_border().**
+
+tm_fill() shades the polygons by using the default colour scheme and tm_borders() adds the borders of the shapefile onto the choropleth map.
+
+If we draws a choropleth map by using tm_fill() alone:
+
+```{r fillOnly}
+  tm_shape(mpsz_pop2020)+ tm_fill("DEPENDENCY")
+```
+
+Notice that the planning subzones are shared according to the respective dependecy values
+
+To add the boundary of the planning subzones, tm_borders will be used as shown in the code chunk below.
+
+```{r addBorder}
+  tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY") +
+  tm_borders(lwd = 0.1,  alpha = 1)
+```
+
+Notice that light-gray border lines have been added on the choropleth map.
+
+The alpha argument is used to define transparency number between 0 (totally transparent) and 1 (not transparent). By default, the alpha value of the col is used (normally 1).
+
+Beside alpha argument, there are three other arguments for tm_borders(), they are:
+
+-   col = border colour,
+
+-   lwd = border line width. The default is 1,
+
+-   lty = border line type. The default is "solid".
+
+### Data classification methods of tmap
+
+Most choropleth maps employ some methods of data classification. The point of classification is to take a large number of observations and group them into data ranges or classes.
+
+**tmap** provides a total ten data classification methods, namely: ***fixed*****, *sd*, *equal*, *pretty* (default), *quantile*, *kmeans*, *hclust*, *bclust*, *fisher*, and *jenks*.**
+
+To define a data classification method, the *style* argument of *tm_fill()* or *tm_polygons()* will be used.
+
+#### Plotting choropleth maps with built-in classification methods
+
+The code chunk below shows a quantile data classification that used 5 classes.
+
+```{r defaultClassification}
+  tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+  n = 5,
+  style = "jenks") +
+  tm_borders(alpha = 0.5)
+
+  tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "equal") +
+  tm_borders(alpha = 0.5)
+```
