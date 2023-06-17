@@ -1,0 +1,88 @@
+---
+title: "Hands-on_Ex08A"
+author: "LIN LIN"
+---
+
+# **Visualising Geospatial Point Data**
+
+Proportional symbol maps (also known as graduate symbol maps) are a class of maps that use the visual variable of size to represent differences in the magnitude of a discrete, abruptly changing phenomenon, e.g. counts of people. Like choropleth maps, you can create classed or unclassed versions of these maps. **The classed ones are known as range-graded or graduated symbols, and the unclassed are called proportional symbols, where the area of the symbols are proportional to the values of the attribute being mapped.** In this hands-on exercise, you will learn how to create a proportional symbol map showing the number of wins by Singapore Pools\' outlets using an R package called **tmap**.
+
+# **Load Libraries and data**
+
+```{r loadLibrary}
+  pacman::p_load(sf, tmap, tidyverse)
+```
+
+```{r loadData}
+  sgpools <- read_csv("data/aspatial/SGPools_svy21.csv")
+  list(sgpools) 
+```
+
+## Creating a sf data frame from an aspatial data frame
+The coords argument requires you to provide the column name of the x-coordinates first then followed by the column name of the y-coordinates.
+The crs argument required you to provide the coordinates system in epsg format. EPSG: 3414 is Singapore SVY21 Projected Coordinate System. You can search for other country’s epsg code by refering to epsg.io.
+
+```{r}
+  sgpools_sf <- st_as_sf(sgpools, 
+                       coords = c("XCOORD", "YCOORD"), #by right you should have x = xcoord, y = xxxx
+                       crs= 3414)  #this is important to let the engine know about the crs - cordinate referencing system
+
+  list(sgpools_sf)
+  # from now there's a geometry collumn
+
+```
+
+
+#### Drawing Proportional Symbol Map
+
+```{r interativemap}
+  tmap_mode("view")
+  tm_shape(sgpools_sf)+
+  tm_bubbles(col = "red",
+             size = 1,
+             border.col = "black",
+             border.lwd = 1)
+```
+
+To draw a proportional symbol map, we need to assign a numerical variable to the size visual attribute. The code chunks below show that the variable Gp1Gp2Winnings is assigned to size visual attribute.
+
+```{r proportionalMap}
+  tm_shape(sgpools_sf)+
+  tm_bubbles(col = "red",
+           size = "Gp1Gp2 Winnings",
+           border.col = "black",
+           border.lwd = 1)
+```
+
+
+#### give it a different colour
+The proportional symbol map can be further improved by using the colour visual attribute. In the code chunks below, OUTLET_TYPE variable is used as the colour attribute variable.
+```{r differentColor}
+  tm_shape(sgpools_sf)+
+tm_bubbles(col = "OUTLET TYPE",   #this is how we set it with different categorical data
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 1)
+```
+
+
+## Magic Map: Twin Brother - Synchronized map
+
+An impressive and little-know feature of tmap’s view mode is that it also works with faceted plots. The argument sync in tm_facets() can be used in this case to produce multiple maps with synchronised zoom and pan settings.
+
+
+```{r syncMap}
+  tm_shape(sgpools_sf) +
+  tm_bubbles(col = "OUTLET TYPE", 
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_facets(by= "OUTLET TYPE",
+            nrow = 1,
+            sync = TRUE)  #this is how you make the facets sync together
+
+```
+
+
+Important note: to work with shiny, use renderTmap() then you can enjoy it in the shiny app
+
