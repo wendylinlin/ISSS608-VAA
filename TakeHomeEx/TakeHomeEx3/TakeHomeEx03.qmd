@@ -1,7 +1,13 @@
 ---
 title: "TakeHomeEx3"
 author: "Lin Lin"
-format: html
+date-modified: "`r Sys.Date()`"
+format:
+  html: 
+    code-fold: true
+    code-summary: "Show the code"
+execute:
+  warning: false
 editor: visual
 ---
 
@@ -18,8 +24,6 @@ We will use visual analytics to understand patterns of groups in the knowledge g
 Task 1: Use visual analytics to identify anomalies in the **business groups** present in the knowledge graph.
 
 Task 2: Develop a visual analytics process to **find similar businesses and group them**. This analysis should focus on a business's most important features and present those features clearly to the user.
-
-
 
 ## 1. Data Pre-processing and cleaning
 
@@ -230,6 +234,7 @@ For source type of company, we may obtain additional company information mainly 
 ### 2.1 Text sensing with tidytext
 
 #### word count
+
 Since we are interested to understand fishing business anomalies, do a simple word count to understand how many companies has fishing related activities, by simply counting occurrence of "fish" from product services field.
 
 ```{r simpleWordCount}
@@ -315,7 +320,6 @@ With this visualization, we can detect none fishing related high frequency token
 ### 2.3 Prepare list of fishing related nodes and edges
 
 We found the Maritime/fishing related keyword above, so we can use this knowledge to filter original edges and nodes to look at fishing related only.
-
 
 ```{r selectedMaritimeCompanies}
   # Define your desired special words
@@ -462,8 +466,6 @@ There are rows with only id but no type information, for the "type" column in MC
 
 ```
 
-
-
 ```{r networkModelWithBetweenessCentralityWithRevenue}
 
   graph <- mc3_graphFish2 %>%
@@ -481,7 +483,6 @@ There are rows with only id but no type information, for the "type" column in MC
 ```
 
 It seems with higher betweenness, there's higher revenue in the transactions
-
 
 ## 4.Consolidate counting information
 
@@ -510,7 +511,9 @@ After that we could categorize relationship manually, give them some labels
 
 
 ```
+
 Generate some counts with the records based on relationship observed.
+
 ```{r statisticsOfFishing related}
   # Counting Beneficial Owner and Company Contacts for each company
   company_counts1 <- MC3_edges_fishing %>%
@@ -538,8 +541,8 @@ Generate some counts with the records based on relationship observed.
 #            MC3_edges_fishing)
 
 ```
-### 4.1 Understanding the company to owner, company to contact, owner to company relationship with the count distribution 
 
+### 4.1 Understanding the company to owner, company to contact, owner to company relationship with the count distribution
 
 ```{r}
   library(patchwork)
@@ -586,6 +589,7 @@ Generate some counts with the records based on relationship observed.
 ```
 
 ### 4.2 Potential anomalities labeling
+
 Next, manually add some label for anomalies with the knowedge from the distribution above.
 
 ```{r outlierDetectionAndLabeling}
@@ -616,6 +620,7 @@ Next, manually add some label for anomalies with the knowedge from the distribut
 Next we split the diagram to different view and investigate different abnormalities
 
 First understand a rough spread among different type of nodes with different labels identified
+
 ```{r typeVSlabel}
   library(ggrepel)
 
@@ -636,9 +641,11 @@ First understand a rough spread among different type of nodes with different lab
   
   
 ```
+
 With the proportion displayed above, we will zoom into look at Too many Owners, Own more than 1 company, No Company Contacts for knowledge graph.
 
 ### 4.3 ompanies with Too Many Owners
+
 First is about those companies with Too Many Owners (there are at least more than 8 of them)
 
 ```{r abnormalitiesForTooManyOwnersSingleCompany}
@@ -684,7 +691,6 @@ First is about those companies with Too Many Owners (there are at least more tha
   visGraph
 
 ```
-
 
 ### 4.4 Owners with more than one company
 
@@ -734,7 +740,7 @@ First is about those companies with Too Many Owners (there are at least more tha
  
   visGraph
   
-```  
+```
 
 ### 4.5 Companies with no contacts at all
 
@@ -780,14 +786,24 @@ First is about those companies with Too Many Owners (there are at least more tha
  
   visGraph
   
-```  
+```
 
-References:
+#### References:
 
-https://datastorm-open.github.io/visNetwork/nodes.html
-https://rdrr.io/cran/visNetwork/man/visNodes.html
-https://search.r-project.org/CRAN/refmans/visNetwork/html/visNodes.html
-https://datastorm-open.github.io/visNetwork/options.html
+-   https://r4va.netlify.app/chap27.html
 
+-   https://isss608-ay2022-23apr.netlify.app/take-home_ex/th_ex02/mc2-kick-starter1
 
+-   https://isss608-ay2022-23apr.netlify.app/outline/lesson08_outline
 
+-   https://cran.r-project.org/web/packages/visNetwork/vignettes/Introduction-to-visNetwork.html
+
+-   http://datastorm-open.github.io/visNetwork/
+
+-   https://datastorm-open.github.io/visNetwork/nodes.html
+
+-   https://rdrr.io/cran/visNetwork/man/visNodes.html
+
+-   https://search.r-project.org/CRAN/refmans/visNetwork/html/visNodes.html
+
+-   https://datastorm-open.github.io/visNetwork/options.html
