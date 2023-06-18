@@ -19,33 +19,7 @@ Task 1: Use visual analytics to identify anomalies in the **business groups** pr
 
 Task 2: Develop a visual analytics process to **find similar businesses and group them**. This analysis should focus on a business's most important features and present those features clearly to the user.
 
-```{r Planning}
-  #Steps planning
-  # 1. Load and process knowledge graph Data
-  # 1.1 Data Cleaning, handling missing value, transforming data, select desired columns
 
-  # 2. Focus on Fish related companies
-  #Since we are going to focus on fishing business anomalies, we will need to filter out the subset of data relate to fishing activities.  We have to do a bit of text sensing
-  ## 2.1 Word count and tokenization for business key activity extraction, then filter for fishing related only
-  ## 2.2 Prepare fishing related node and edge for further processing
-  ## 2.3. Transform the business relationship by counting company to company, company to owner, company to contact information etc,  categorize relationship manually, give some labels
-  # Then among the business groups, we can do exploratory analysis on the relationship, explore those with top number of connections
-
-  # 3. Visualizing pattern of groups
-  # 3.1 Apply clustering algorithms to identify groups of related entities within the knowledge graph. Use techniques such as community detection algorithms (e.g., Louvain algorithm) to detect clusters.
-  # 3.2 Visualize the identified groups using appropriate visualizations, such as a network graph or a dendrogram, to understand the patterns and relationships among the groups.
-
-  # 4. Identifying anomalies in business groups:
-
-   #4.1 Try to define anomaly detection metrics based on known characteristics of IUU fishing companies. Can consider things like the number of connections, financial transactions, or unusual ownership structures.
-  # Calculate the anomaly scores for each business group based on the defined metrics. Use appropriate statistical techniques or anomaly detection algorithms like Isolation Forest or Local Outlier Factor. R packages like anomalyDetection and outliers can be used for this purpose.
-
-  # 5. Measuring similarity and expressing confidence in groupings:
-
-  # Calculate similarity scores or distances between businesses within each group using appropriate similarity measures, such as cosine similarity or Euclidean distance.
-  # Visualize the similarity measures to express confidence in the groupings. May use Heatmaps or dendrograms
- 
-```
 
 ## 1. Data Pre-processing and cleaning
 
@@ -306,7 +280,7 @@ Below code visualize the distribution of tokenized words for prodct_service
 
 With above we saw the top frequently sensed word may not be useful, not in our interest. For example, NA, "a" and "to". We will need to remove these words as stop words.
 
-#### Remove stopwords and custom words
+### 2.2 Remove stopwords and custom words and Filter data
 
 From the token generated, we need to take out the common/generic words and we will also exclude NA records, and there are some words obviously doesn't relate to fish activity such as machines, transportations etc. We can remove them as well.
 
@@ -319,7 +293,7 @@ From the token generated, we need to take out the common/generic words and we wi
   na.omit()
 ```
 
-### Visualization with bar chart after remove stopword
+#### Visualization with bar chart after remove stopword
 
 With this visualization, we can detect none fishing related high frequency token and remove it by updating condition in last step. By several rounds of refinement, below is the diagram that have mostly fishing related keywords:
 
@@ -338,7 +312,7 @@ With this visualization, we can detect none fishing related high frequency token
     
 ```
 
-2.3 Prepare list of fishing related nodes and edges
+### 2.3 Prepare list of fishing related nodes and edges
 
 We found the Maritime/fishing related keyword above, so we can use this knowledge to filter original edges and nodes to look at fishing related only.
 
@@ -357,10 +331,6 @@ We found the Maritime/fishing related keyword above, so we can use this knowledg
   MC3_edges_fishing <- MC3_edges_clean_Join %>%
   filter(source %in% MC3_Node_fish$id) %>%
   distinct()
-  # MC3_edges_fishing <- MC3_edges_clean_Join %>%
-  # filter(
-  #   source %in% MC3_nodes$id[grep("fish|seafood|frozen|fresh|salmon|canned|tuna|shrimp|shellfish|sea|squid|fishing|seafoods|marine|fillets", MC3_nodes$product_services, ignore.case = TRUE)]) %>%
-  # distinct()
 
 ```
 
@@ -396,7 +366,8 @@ We found the Maritime/fishing related keyword above, so we can use this knowledg
     theme_graph()
 ```
 
-Next,  extract all fish active related nodes to construct a graph:
+### 3.1 extract all fish active related nodes to construct a graph:
+
 ```{r deriveNewNodeData}
  
   id3 <- MC3_edges_fishing %>%
@@ -419,6 +390,24 @@ Next,  extract all fish active related nodes to construct a graph:
   mutate(betweenness_centrality = centrality_betweenness(),
          closeness_centrality = centrality_closeness())
   
+  
+  # Plot histogram of betweenness_centrality
+  library(igraph)
+  library(ggplot2)
+
+  # Convert tbl_graph/igraph object to a data frame
+  mc3_graphFish_df <- as.data.frame(mc3_graphFish)
+  
+  # Create a boxplot of betweenness_centrality
+  ggplot(mc3_graphFish_df, aes(x = "", y = betweenness_centrality)) +
+  geom_boxplot(fill = "steelblue", color = "black") +
+  labs(x = "", y = "Betweenness Centrality") +
+  theme_minimal()
+  
+  # Use boxplot.stats() to detect outliers
+  outlier_stats_Betweenness <- boxplot.stats(mc3_graphFish$betweenness_centrality)$out
+  
+  
   mc3_graphFish %>%
   filter(betweenness_centrality >= 2) %>%
   ggraph(layout = "fr") +
@@ -430,21 +419,13 @@ Next,  extract all fish active related nodes to construct a graph:
     scale_size_continuous(range=c(1,10))+
     theme_graph()
   
-   mc3_graphFish %>%
-  filter(betweenness_centrality >= 2) %>%
-  ggraph(layout = "with_lgl") +
-    geom_edge_link(aes(alpha=0.5)) +
-    geom_node_point(aes(
-      size = closeness_centrality,
-      colour = type,
-      alpha = 0.5)) +
-    scale_size_continuous(range=c(1,5))+
-    theme_graph()
+ 
   
   
 ```
 
-There are rows with only id but no type information, for the "type" column in MC3_nodes_fishNetwork that is empty, we can potentially fill them with corresponding values from MC3_edges_clean because it provide target node types.
+There are rows with only id but no type information, for the "type" column in MC3_nodes_fishNetwork that is empty, we can potentially **fill them with corresponding values from MC3_edges_clean because it provide target node types.**
+
 ```{r fishNetworkWithTargetType}
   #extract all fish activy related source
   id5 <- MC3_edges_fishing %>%
@@ -469,7 +450,7 @@ There are rows with only id but no type information, for the "type" column in MC
 
   mc3_graphFish2 %>%
   filter(betweenness_centrality >= 2) %>%
-  ggraph(layout = "with_lgl") +
+  ggraph(layout = "as_star") +
     geom_edge_link(aes(alpha=0.5)) +
     geom_node_point(aes(
       size = betweenness_centrality,
@@ -481,53 +462,28 @@ There are rows with only id but no type information, for the "type" column in MC
 
 ```
 
-<!-- # ```{r FAILED:fillInTargetType}
-  #Find where are the rows without type info in current fishNetwork Nodes
-  empty_type_rows <- MC3_nodes_fishNetwork %>%
-  filter(is.na(type))
-
-  #try to match the empty rows with target edge type information
-  filled_nodes <- empty_type_rows %>%
-  left_join(MC3_edges_clean, by = c("id" = "target")) %>%
-  select(id, edgeType) %>%
-  rename(targetType = edgeType)%>%
-  filter(!is.na(targetType))%>%
-  distinct()
-  
-  MC3_nodes_fishNetwork2 <- MC3_nodes_fishNetwork %>%
-  left_join(filled_nodes, by = "id") %>%
-  mutate(type = ifelse(is.na(type), targetType, type)) %>%
-  select(id, country, type, revenue_omu, product_services)%>%
-  distinct()
-  
-``` -->
-
-<!-- ```{r calculateGraphWithBetweenness}
-  
-    
-  mc3_graph <- tbl_graph(nodes = MC3_nodes2,
-                       edges = MC3_edges_clean,
-                       directed = FALSE) %>%
-  mutate(betweenness_centrality = centrality_betweenness(),
-         closeness_centrality = centrality_closeness())
-```-->
 
 
-```{r networkModelWithBetweenessCentrality}
-  graph <- mc3_graphFish %>%
-  filter(betweenness_centrality >= 100000) %>%
+```{r networkModelWithBetweenessCentralityWithRevenue}
+
+  graph <- mc3_graphFish2 %>%
+  filter(betweenness_centrality >= 10) %>%
   ggraph(layout = "nicely") +
-    geom_edge_link(aes( colour = edgeType)) +
+    geom_edge_link(aes(colour = edgeType)) +
     geom_node_point(aes(
       size = betweenness_centrality,
-      colour  = type,
+      colour  = revenue_omu,
       alpha=0.5)) +
     scale_size_continuous(range=c(1,10))+
     theme_graph()
+  graph
 
 ```
 
-## 3.Consolidate counting information
+It seems with higher betweenness, there's higher revenue in the transactions
+
+
+## 4.Consolidate counting information
 
 With the above knowledge graph, we are interested to know 1. companies vs. owner count, for each company, how many owner does it have? 2. companies vs. company contacts, for each company, how many contacts does it have? 3. owners vs. companies, which are the owners that owns multiple companies?
 
@@ -582,6 +538,8 @@ Generate some counts with the records based on relationship observed.
 #            MC3_edges_fishing)
 
 ```
+### 4.1 Understanding the company to owner, company to contact, owner to company relationship with the count distribution 
+
 
 ```{r}
   library(patchwork)
@@ -627,7 +585,8 @@ Generate some counts with the records based on relationship observed.
   hist_combined
 ```
 
-Next, manually add some label for anomalies.
+### 4.2 Potential anomalities labeling
+Next, manually add some label for anomalies with the knowedge from the distribution above.
 
 ```{r outlierDetectionAndLabeling}
 
@@ -656,6 +615,32 @@ Next, manually add some label for anomalies.
 
 Next we split the diagram to different view and investigate different abnormalities
 
+First understand a rough spread among different type of nodes with different labels identified
+```{r typeVSlabel}
+  library(ggrepel)
+
+  count_table <- MC3_nodes_fishupdated %>%
+  group_by(type, label) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+  # Plot the stacked bar chart
+  ggplot(data = MC3_nodes_fishupdated, aes(x = type, fill = label)) +
+  geom_bar() +
+  # geom_text(data = count_table, aes(label = count), vjust = -0.5, color = "black") +
+  labs(title = "Source Node Types with Breakdown of different business pattern label",
+       x = "Source Types",
+       y = "Count") +
+  scale_fill_discrete(name = "business pattern label")+
+    coord_flip()
+  
+  
+```
+With the proportion displayed above, we will zoom into look at Too many Owners, Own more than 1 company, No Company Contacts for knowledge graph.
+
+### 4.3 ompanies with Too Many Owners
+First is about those companies with Too Many Owners (there are at least more than 8 of them)
+
 ```{r abnormalitiesForTooManyOwnersSingleCompany}
 
   MC3_nodes_toomanyowners <- MC3_nodes_fishupdated%>%
@@ -675,98 +660,125 @@ Next we split the diagram to different view and investigate different abnormalit
   
   MC3_nodes_toomanyownersView <- rbind(idS, idT) %>%
   left_join(MC3_nodes_fishupdated, by = c("id" = "id"))%>%
-  rename (group = type) %>%   #define the type as different group for color
-  distinct()
+  distinct() %>%   #define the type as different group for color
+  rename (group = type)
     
   
-  visGraph <- visNetwork(MC3_nodes_toomanyownersView,MC3_edges_toomanyowners)%>%
+  visGraph <- visNetwork(MC3_nodes_toomanyownersView,MC3_edges_toomanyowners, width = "100%")%>%
   visIgraphLayout(layout = "layout_with_fr") %>%
-  visNodes(color = group_colors) %>%
-    
+  visNodes(id = "id", label = "numOfBenOwner") %>%
   visEdges(arrows = 'to') %>%
-  visOptions(selectedBy = "label",
-           highlightNearest = list(enabled = TRUE,
-                                   degree = 1,
-                                   hover = TRUE,
-                                   labelOnly = TRUE),
-            nodesIdSelection = TRUE) %>%
+  visOptions(selectedBy = "group",
+             highlightNearest = list(enabled = TRUE,
+                                     degree = 1,
+                                     hover = TRUE,
+                                     labelOnly = TRUE),
+             nodesIdSelection = TRUE
+             ) %>%
+    visInteraction(navigationButtons = TRUE)%>%
   visLegend() %>%
   visLayout(randomSeed = 123)
 
+  
+ 
   visGraph
 
 ```
 
 
+### 4.4 Owners with more than one company
 
-```{r parallelcordinate}
-    #use parallel cordinate to visualize
+```{r abnormalitiesForOneOwnerHasMoreThanOneCompany}
 
-  # library(cluster)
-  # library(caret)
-  # 
-  # MC3_nodes <- MC3_nodes %>%
-  # select(product_services, country, revenue_omu, type) %>%
-  # na.omit()
-  # 
-  # 
-  # 
-  # #prepare data
-  # clustering_data <- MC3_nodes[, c("product_services", "revenue_omu", "type")]
-  # #try K means clustering
-  # k <- 4  # Number of clusters
-  # set.seed(123)  # For reproducibility
-  # kmeans_result <- kmeans(clustering_data, centers = k)
-  # 
-  # MC3_nodes$cluster <- as.factor(kmeans_result$cluster)
-  # cluster_summary <- aggregate(clustering_data, by = list(cluster = MC3_nodes$cluster), FUN = mean)
-  # 
-  # 
-  # 
-  # pacman::p_load(GGally, parallelPlot)
-  # library(GGally)
-  # ggparcoord(MC3_nodes[, c("product_services", "country", "revenue_omu", "type","cluster")], 
-  #          columns = 1:3, groupColumn = "cluster", 
-  #          title = "Parallel Coordinate Plot: Features by Cluster")
-  # 
+  group_colors <- c("Beneficial Owner" = "lightpink1",
+                  "Company" = "cadetblue3",
+                  "Company Contacts" = "grey")
+
+  MC3_nodes_abnormalOwner <- MC3_nodes_fishupdated%>%
+  filter(label == "Own more than 1 company") 
   
-```
-
-## ploting relationship?
-
-TODO - failed need troubleshoot
-
-```{r graphobject}
-  # GraphMC3 <- tbl_graph(nodes = MC3_nodes_clean,
-  #                       edges = MC3_edges_clean,
-  #                          directed = FALSE)
-  # #
-  # GraphMC3
-  #is_connected <- is.connected(GraphMC2)
+  MC3_edges_abnormalOwner <- MC3_edges_fishing %>%
+  filter(target %in% MC3_nodes_abnormalOwner$id)%>%
+    rename(from = source)%>%
+    rename(to = target)
   
-  # peopleEntityRelationship %>%
-  # activate(edges) %>%
-  # arrange(desc(weightkg))
-```
+  idS1 <- MC3_edges_abnormalOwner %>%
+  select(from) %>%
+  rename(id = from)
+  idT1 <- MC3_edges_abnormalOwner %>%
+  select(to) %>%
+  rename(id = to)
+  
+  MC3_nodes_abnormalOwnerView <- rbind(idS1, idT1) %>%
+  left_join(MC3_nodes_fishupdated, by = c("id" = "id"))%>%
+  rename (group = type) %>%   #define the type as different group for color
+  distinct()
+    
+  
+  visGraph <- visNetwork(MC3_nodes_abnormalOwnerView,MC3_edges_abnormalOwner, width = "100%")%>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  visNodes(color = group_colors) %>%
+  # visEdges(arrows = 'to') %>%
+  visOptions(nodesIdSelection = TRUE,
+             selectedBy = "group",
+             highlightNearest = list(enabled = TRUE,
+                                     degree = 1,
+                                     hover = TRUE,
+                                     labelOnly = TRUE)
+             ) %>%
+    visInteraction(navigationButtons = TRUE)%>%
+  visLegend() %>%
+  visLayout(randomSeed = 123)
 
-##USE THIS LATER?? **Handling missing values:** for some or the product/services, there's blank value such as "character(0)", **recode these value to NA these value before pass them for text sensing**.:
+  
+ 
+  visGraph
+  
+```  
 
-![](images/Issue%20in%20data.JPG)
+### 4.5 Companies with no contacts at all
 
-After these, for the rows where product_services and both revenue_omu columns are NA, and the type is not "Company", this node is less useful as it's not fishing related activity, and it's not providing any company related information.
+```{r abnormalitiesNoCompanyContacts}
 
-```{r NA fields}
-  # # Recode "character(0)" to NA in the product_services column
-  # MC3_nodes_clean$product_services[MC3_nodes_clean$product_services == "character(0)"] <- NA
-  # 
-  # MC3_nodes_test <- MC3_nodes_clean %>%
-  # filter(!(is.na(product_services) & is.na(revenue_omu) & type != "Company"))
-  # 
-  # # Count the number of sources in MC3_edges_clean that exist in MC3_nodes_clean
-  # existing_sources_count1 <- MC3_edges_clean %>%
-  # mutate(source = as.character(source)) %>%
-  # semi_join(select(MC3_nodes_test, id), by = c("source" = "id")) %>%
-  # summarise(sources_found = n_distinct(source))
-  # print(existing_sources_count1)
+  MC3_nodes_NoCompanyContacts <- MC3_nodes_fishupdated%>%
+  filter(label == "No Company Contacts") 
+  
+  MC3_edges_NoCompanyContacts <- MC3_edges_fishing %>%
+  filter(source %in% MC3_nodes_NoCompanyContacts$id)%>%
+    rename(from = source)%>%
+    rename(to = target)
+  
+  idS2 <- MC3_edges_NoCompanyContacts %>%
+  select(from) %>%
+  rename(id = from)
+  idT2 <- MC3_edges_NoCompanyContacts %>%
+  select(to) %>%
+  rename(id = to)
+  
+  MC3_nodes_NoCompanyContactsView <- rbind(idS2, idT2) %>%
+  left_join(MC3_nodes_fishupdated, by = c("id" = "id"))%>%
+  rename (group = type) %>%   #define the type as different group for color
+  distinct()
+    
+  
+  visGraph <- visNetwork(MC3_nodes_NoCompanyContactsView,MC3_edges_NoCompanyContacts, width = "100%")%>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  # visNodes(color = group_colors) %>%
+  visEdges(arrows = 'to') %>%
+  visOptions(nodesIdSelection = TRUE,
+             selectedBy = "group",
+             highlightNearest = list(enabled = TRUE,
+                                     degree = 1,
+                                     hover = TRUE,
+                                     labelOnly = TRUE)
+             ) %>%
+    visInteraction(navigationButtons = TRUE)%>%
+  visLegend() %>%
+  visLayout(randomSeed = 123)
 
-```
+  
+ 
+  visGraph
+  
+```  
+
