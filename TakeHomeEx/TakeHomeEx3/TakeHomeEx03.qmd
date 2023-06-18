@@ -782,3 +782,12 @@ First is about those companies with Too Many Owners (there are at least more tha
   
 ```  
 
+References:
+
+https://datastorm-open.github.io/visNetwork/nodes.html
+https://rdrr.io/cran/visNetwork/man/visNodes.html
+https://search.r-project.org/CRAN/refmans/visNetwork/html/visNodes.html
+https://datastorm-open.github.io/visNetwork/options.html
+
+
+
