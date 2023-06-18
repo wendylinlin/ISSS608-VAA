@@ -19,15 +19,16 @@ Task 1: Use visual analytics to identify anomalies in the **business groups** pr
 
 Task 2: Develop a visual analytics process to **find similar businesses and group them**. This analysis should focus on a business's most important features and present those features clearly to the user.
 
-```{r background information}
+```{r Planning}
   #Steps planning
   # 1. Load and process knowledge graph Data
   # 1.1 Data Cleaning, handling missing value, transforming data, select desired columns
 
   # 2. Focus on Fish related companies
   #Since we are going to focus on fishing business anomalies, we will need to filter out the subset of data relate to fishing activities.  We have to do a bit of text sensing
-  ## 2.1 Word tokenization for business key activity extraction, then filter for fishing related only
-  ## 2.2. Transform the business relationship by counting company to company, company to owner, company to contact information etc,  categorize relationship manually, give some labels
+  ## 2.1 Word count and tokenization for business key activity extraction, then filter for fishing related only
+  ## 2.2 Prepare fishing related node and edge for further processing
+  ## 2.3. Transform the business relationship by counting company to company, company to owner, company to contact information etc,  categorize relationship manually, give some labels
   # Then among the business groups, we can do exploratory analysis on the relationship, explore those with top number of connections
 
   # 3. Visualizing pattern of groups
@@ -49,6 +50,28 @@ Task 2: Develop a visual analytics process to **find similar businesses and grou
 ## 1. Data Pre-processing and cleaning
 
 Load the library and read the json relationship file MC2.
+
+-   jsonlite: A lightweight R package for working with JSON data, providing functions to convert JSON to R objects and vice versa.
+
+-   tidygraph: A tidyverse package that provides a tidy and consistent approach to working with graph data structures, allowing for easy manipulation, visualization, and analysis of networks.
+
+-   ggraph: An extension of the ggplot2 package that specializes in creating aesthetically pleasing and customizable visualizations of graphs and networks.
+
+-   visNetwork: An R package that utilizes the vis.js library to create interactive network visualizations, allowing for exploration and analysis of complex networks.
+
+-   tidyverse: A collection of R packages, including ggplot2, dplyr, tidyr, and others, designed to provide a cohesive and consistent framework for data manipulation, visualization, and analysis.
+
+-   shiny: An R package for building interactive web applications directly from R code, enabling the creation of user-friendly and responsive data-driven applications.
+
+-   plotly: An R package that provides a high-level interface for creating interactive and dynamic visualizations, allowing users to explore and analyze data through features like hover effects, zooming, and panning.
+
+-   graphlayouts: An R package that offers various algorithms for laying out and visualizing graph structures, providing options for arranging nodes and edges in a visually meaningful way.
+
+-   ggforce: An extension package for ggplot2 that extends its capabilities by introducing new geoms, statistical transformations, and scales, enabling users to create more advanced and specialized plots.
+
+-   tidytext: A tidyverse package that provides tools for text mining and analysis, allowing users to manipulate, explore, and visualize text data using the principles of tidy data.
+
+-   skimr: An R package that provides concise and informative summaries of data frames, providing a quick overview of variables' distributions, missing values, and other summary statistics.
 
 ```{r loadData}
   #echo | false
@@ -202,97 +225,296 @@ There were sources id found in node file but no target id was found at all. Look
 ```{r joinSourceTypeData}
 
   # Consolidate node information and add source node types, target node type will not be found from node join. Edge type is treated as the target type
-  MC3_edges_clean_Join <- MC3_edges_clean %>%
-  mutate(source = as.character(source),
-         target = as.character(target),
-         edgeType = as.character(edgeType)) %>%
-  left_join(select(MC3_nodes_clean, id, sourceNodeType = type), by = c("source" = "id")) %>%
-  group_by(source, target, sourceNodeType, edgeType) %>%
-  summarise(weights = n()) %>%
+   MC3_edges_clean_Join <- MC3_edges_clean %>%
+  left_join(select(MC3_nodes_clean, 
+      #%>% filter(type == "Company"),
+      id, sourceNodeType = type), by = c("source" = "id")) %>%
+  group_by(source, target, sourceNodeType) %>%
   filter(source != target) %>%
+  distinct() %>%
   ungroup()
 
 
   # Plot the stacked bar chart
   ggplot(data = MC3_edges_clean_Join, aes(x = sourceNodeType, fill = edgeType)) +
   geom_bar() +
-  labs(title = "Source Node Types with Breakdown of EdgeType",
+  labs(title = "Source Node Types with Breakdown of Target edgeType",
        x = "Source Types",
        y = "Count") +
-  scale_fill_discrete(name = "EdgeType")+
+  scale_fill_discrete(name = "Target Type")+
     coord_flip()
   
   
 ```
-They are some observations of source type from benefit owner/company contacts to target type of benefit owner/company contacts.
-By right all sources should be company.
 
-For source type of company, we may obtain additional company information mainly from Node (Revenue, Product/Services), and people related information can be obtained from Edge (Edge Type). We can use this to  derive a new nodes data frame from edges data frame.
+They are some observations of source type from benefit owner/company contacts to target type of benefit owner/company contacts. By right all sources should be company.As the number of none company source are lesser, consider exclude those are company contacts/beneficial owner type.
+
+For source type of company, we may obtain additional company information mainly from Node (Revenue, Product/Services), and people related information can be obtained from Edge (Edge Type). We can use this to derive a new nodes data frame from edges data frame.
+
+## 2.Focus on Fish related companies
+
+### 2.1 Text sensing with tidytext
+
+#### word count
+Since we are interested to understand fishing business anomalies, do a simple word count to understand how many companies has fishing related activities, by simply counting occurrence of "fish" from product services field.
+
+```{r simpleWordCount}
+  #start a bit of text sensing, display the result by max value first
+
+  MC3_nodes1 <- MC3_nodes_clean %>% 
+  mutate(n_fish = str_count(product_services, "fish")) %>%
+  arrange(desc(n_fish))
+
+  library(ggplot2)
+  ggplot(data = MC3_nodes1, aes(x = n_fish)) +
+  geom_histogram(bins=20, 
+                 boundary = 20,
+                 color="grey25", 
+                 fill="grey90") +
+  ggtitle("Distribution of keyword Fish frequency") 
+  
+```
+
+From the distribution we can see not all companies are fishing related. Hence we could filter out some companies.
+
+#### Tokenisation
+
+We then do tokenization of the Product_Services In text sensing, tokenisation is the process of **breaking up a given text** into units called tokens. We will discard characters like punctuation marks in this progress.
+
+The two basic arguments to unnest_tokens() used here are column names. First argument is **the output column name** that will be created as the text is unnested into it, and then the **input column that the text comes from** (product_services, in this case).
+
+```{r tokenization}
+  nodesToken <- MC3_nodes_clean %>%
+  unnest_tokens (word, product_services)
+```
+
+Below code visualize the distribution of tokenized words for prodct_service
+
+```{r visualizeTextSensingWord}
+  nodesToken %>%
+  count(word, sort = TRUE) %>%
+  top_n(30) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+      labs(x = "Count",
+      y = "Unique words",
+      title = "Count of unique words found in product_services field")
+```
+
+With above we saw the top frequently sensed word may not be useful, not in our interest. For example, NA, "a" and "to". We will need to remove these words as stop words.
+
+#### Remove stopwords and custom words
+
+From the token generated, we need to take out the common/generic words and we will also exclude NA records, and there are some words obviously doesn't relate to fish activity such as machines, transportations etc. We can remove them as well.
+
+```{r stopwordsRemove}
+  custom_stopwords <- c("unknown", "machines", "transportation", "products","related", "services", "including", "systems", "equipment", "materials", "steel", "shoes", "accessories", "logistics", "footwear", "chemicals", "metal")
+
+  tidy_stopwords <- nodesToken %>%
+  anti_join(stop_words)%>%
+  anti_join(tibble(word = custom_stopwords)) %>%
+  na.omit()
+```
+
+### Visualization with bar chart after remove stopword
+
+With this visualization, we can detect none fishing related high frequency token and remove it by updating condition in last step. By several rounds of refinement, below is the diagram that have mostly fishing related keywords:
+
+```{r removeStopWordPlot}
+  tidy_stopwords %>%
+  count(word, sort = TRUE) %>%
+  top_n(30) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+      labs(x = "Count",
+      y = "Unique words",
+      title = "Count of unique words found in product_services field")
+    
+```
+
+2.3 Prepare list of fishing related nodes and edges
+
+We found the Maritime/fishing related keyword above, so we can use this knowledge to filter original edges and nodes to look at fishing related only.
 
 
+```{r selectedMaritimeCompanies}
+  # Define your desired special words
+ desired_words <- c("fish", "seafood", "frozen", "fresh", "salmon", "canned", "meat", "tuna", "shrimp", "shellfish", "sea", "squid", "seafoods", "marine", "fillets", "foods")
 
-## 2.Derive New Node Data, Building network model with tidygraph
+  # Filter the companies that contain the desired special words
+  filtered_companies <- subset(nodesToken, grepl(paste(desired_words, collapse = "|"), id, ignore.case = TRUE))
+  
+  
+  MC3_Node_fish <- MC3_nodes_clean %>%
+  filter(type == "Company" & grepl("fish|seafood|frozen|fresh|salmon|canned|tuna|shrimp|shellfish|sea|squid|fishing|seafoods|marine|fillets", product_services, ignore.case = TRUE)) 
+  
+  MC3_edges_fishing <- MC3_edges_clean_Join %>%
+  filter(source %in% MC3_Node_fish$id) %>%
+  distinct()
+  # MC3_edges_fishing <- MC3_edges_clean_Join %>%
+  # filter(
+  #   source %in% MC3_nodes$id[grep("fish|seafood|frozen|fresh|salmon|canned|tuna|shrimp|shellfish|sea|squid|fishing|seafoods|marine|fillets", MC3_nodes$product_services, ignore.case = TRUE)]) %>%
+  # distinct()
 
-```{r deriveNewNodeData}
-  id1 <- MC3_edges_clean %>%
+```
+
+## 3. Derive New Node Data, Building network model with tidygraph
+
+```{r basicNetworkPlot}
+   id1 <- MC3_edges_clean %>%
   select(source) %>%
   rename(id = source)
-
   id2 <- MC3_edges_clean %>%
     select(target) %>%
     rename(id = target)
-
-    MC3_nodes1 <- rbind(id1, id2) %>%
+  MC3_nodes1 <- rbind(id1, id2) %>%
     distinct() %>%
     left_join(MC3_nodes_clean,
               unmatched = "drop")
-  #The unmatched = "drop" argument specifies that any rows from the left data frame (id1 and id2) that do not have a match in the right data frame (MC3_nodes_clean) should be dropped from the result.
+  
+  mc3_graph <- tbl_graph(nodes = MC3_nodes1,
+                       edges = MC3_edges_clean,
+                       directed = FALSE) %>%
+  mutate(betweenness_centrality = centrality_betweenness(),
+         closeness_centrality = centrality_closeness())
+  
+  mc3_graph %>%
+  filter(betweenness_centrality >= 100000) %>%
+  ggraph(layout = "fr") +
+    geom_edge_link(aes(alpha=0.5, colour = edgeType)) +
+    geom_node_point(aes(
+      size = betweenness_centrality,
+      colour = type,
+      alpha = 0.5)) +
+    scale_size_continuous(range=c(1,10))+
+    theme_graph()
+```
+
+Next,  extract all fish active related nodes to construct a graph:
+```{r deriveNewNodeData}
+ 
+  id3 <- MC3_edges_fishing %>%
+  select(source) %>%
+  rename(id = source)
+
+  #extract all fish activity related target
+  id4 <- MC3_edges_fishing %>%
+    select(target) %>%
+    rename(id = target)
+  
+  MC3_nodes_fishNetwork <- rbind(id3, id4) %>%
+    distinct() %>%
+    left_join(MC3_nodes_clean,
+              unmatched = "drop")
+  
+  mc3_graphFish <- tbl_graph(nodes = MC3_nodes_fishNetwork,
+                       edges = MC3_edges_fishing,
+                       directed = FALSE) %>%
+  mutate(betweenness_centrality = centrality_betweenness(),
+         closeness_centrality = centrality_closeness())
+  
+  mc3_graphFish %>%
+  filter(betweenness_centrality >= 2) %>%
+  ggraph(layout = "fr") +
+    geom_edge_link(aes(alpha=0.5)) +
+    geom_node_point(aes(
+      size = betweenness_centrality,
+      colour = type,
+      alpha = 0.5)) +
+    scale_size_continuous(range=c(1,10))+
+    theme_graph()
+  
+   mc3_graphFish %>%
+  filter(betweenness_centrality >= 2) %>%
+  ggraph(layout = "with_lgl") +
+    geom_edge_link(aes(alpha=0.5)) +
+    geom_node_point(aes(
+      size = closeness_centrality,
+      colour = type,
+      alpha = 0.5)) +
+    scale_size_continuous(range=c(1,5))+
+    theme_graph()
   
   
 ```
-There are rows with only id but no type information,  for the "type" column in MC3_nodes1 that is empty, we can potentially fill them with corresponding values from MC3_edges_clean because it provide target node types.
 
-```{r fillInTargetType}
-  empty_type_rows <- MC3_nodes1 %>%
+There are rows with only id but no type information, for the "type" column in MC3_nodes_fishNetwork that is empty, we can potentially fill them with corresponding values from MC3_edges_clean because it provide target node types.
+```{r fishNetworkWithTargetType}
+  #extract all fish activy related source
+  id5 <- MC3_edges_fishing %>%
+  select(source, type = sourceNodeType) %>%
+  rename(id = source)
+
+  #extract all fish activity related target
+  id6 <- MC3_edges_fishing %>%
+    select(target, type = edgeType) %>%
+    rename(id = target)
+  
+  MC3_nodes_fishNetwork2 <- rbind(id5, id6) %>%
+    distinct() %>%
+    left_join(MC3_nodes_clean,
+              unmatched = "drop")
+  
+  mc3_graphFish2 <- tbl_graph(nodes = MC3_nodes_fishNetwork2,
+                       edges = MC3_edges_fishing,
+                       directed = FALSE) %>%
+  mutate(betweenness_centrality = centrality_betweenness(),
+         closeness_centrality = centrality_closeness())
+
+  mc3_graphFish2 %>%
+  filter(betweenness_centrality >= 2) %>%
+  ggraph(layout = "with_lgl") +
+    geom_edge_link(aes(alpha=0.5)) +
+    geom_node_point(aes(
+      size = betweenness_centrality,
+      colour = type,
+      alpha = 0.5)) +
+    scale_size_continuous(range=c(1,10))+
+    theme_graph()
+
+
+```
+
+<!-- # ```{r FAILED:fillInTargetType}
+  #Find where are the rows without type info in current fishNetwork Nodes
+  empty_type_rows <- MC3_nodes_fishNetwork %>%
   filter(is.na(type))
 
-  # filled_nodes <- empty_type_rows %>%
-  # left_join(MC3_edges_clean, by = c("id" = "target")) %>%
-  # filter(!is.na(edgeType)) %>%
-  # select(id, edgeType) %>%
-  # rename(type = edgeType)
-
+  #try to match the empty rows with target edge type information
   filled_nodes <- empty_type_rows %>%
   left_join(MC3_edges_clean, by = c("id" = "target")) %>%
   select(id, edgeType) %>%
   rename(targetType = edgeType)%>%
-  filter(!is.na(targetType))
+  filter(!is.na(targetType))%>%
+  distinct()
   
-  
-  # MC3_nodes2 <- MC3_nodes1 %>%
-  # anti_join(empty_type_rows, by = "id") %>%
-  # bind_rows(filled_nodes)
-  
-  # MC3_nodes2 <- MC3_nodes1 %>%
-  # left_join(filled_nodes, by = "id")
-
-  MC3_nodes2 <- MC3_nodes1 %>%
+  MC3_nodes_fishNetwork2 <- MC3_nodes_fishNetwork %>%
   left_join(filled_nodes, by = "id") %>%
   mutate(type = ifelse(is.na(type), targetType, type)) %>%
-  select(id, country, type, revenue_omu, product_services)
+  select(id, country, type, revenue_omu, product_services)%>%
+  distinct()
   
-```
+``` -->
 
-```{r calculateGraphWithBetweenness}
+<!-- ```{r calculateGraphWithBetweenness}
+  
+    
   mc3_graph <- tbl_graph(nodes = MC3_nodes2,
                        edges = MC3_edges_clean,
                        directed = FALSE) %>%
   mutate(betweenness_centrality = centrality_betweenness(),
          closeness_centrality = centrality_closeness())
-```
+```-->
+
 
 ```{r networkModelWithBetweenessCentrality}
-  graph <- mc3_graph %>%
+  graph <- mc3_graphFish %>%
   filter(betweenness_centrality >= 100000) %>%
   ggraph(layout = "nicely") +
     geom_edge_link(aes( colour = edgeType)) +
@@ -303,15 +525,11 @@ There are rows with only id but no type information,  for the "type" column in M
     scale_size_continuous(range=c(1,10))+
     theme_graph()
 
-  # visNetwork(MC3_nodes1, MC3_edges_clean, width = "100%")
 ```
 
-#### Consolidate counting information
+## 3.Consolidate counting information
 
-With the above knowledge graph, we are interested to know
-1. companies vs. owner count, for each company, how many owner does it have?
-2. companies vs. company contacts, for each company, how many contacts does it have?
-3. owners vs. companies, which are the owners that owns multiple companies?
+With the above knowledge graph, we are interested to know 1. companies vs. owner count, for each company, how many owner does it have? 2. companies vs. company contacts, for each company, how many contacts does it have? 3. owners vs. companies, which are the owners that owns multiple companies?
 
 After that we could categorize relationship manually, give them some labels
 
@@ -330,116 +548,156 @@ After that we could categorize relationship manually, give them some labels
     summarise(numOfCompanyOwned = n_distinct(source))
 
   # Update the nodes with the count information
-  MC3_nodes_updated <- MC3_nodes2 %>%
+  MC3_nodes_updated <- MC3_nodes_clean %>%
     left_join(company_counts, by = c("id" = "source")) %>%
     left_join(owner_counts, by = c("id" = "target"))
 
+
+```
+Generate some counts with the records based on relationship observed.
+```{r statisticsOfFishing related}
+  # Counting Beneficial Owner and Company Contacts for each company
+  company_counts1 <- MC3_edges_fishing %>%
+  filter(edgeType %in% c("Beneficial Owner", "Company Contacts")) %>%
+  group_by(source, edgeType) %>%
+  summarise(count = n()) %>%
+  pivot_wider(names_from = edgeType, values_from = count, values_fill = 0)%>%
+  rename(numOfBenOwner = "Beneficial Owner", numOfComContact = "Company Contacts")
+
+  # Counting companies owned by each Beneficial Owner
+  owner_counts1 <- MC3_edges_fishing %>%
+    filter(edgeType == "Beneficial Owner") %>%
+    group_by(target) %>%
+    summarise(numOfCompanyOwned = n_distinct(source))
+
+  # Update the nodes with the count information, and take out Undesired companies
+    MC3_nodes_fishupdated <- MC3_nodes_fishNetwork2 %>%
+    left_join(company_counts1, by = c("id" = "source")) %>%
+    left_join(owner_counts1, by = c("id" = "target")) %>%
+    distinct(id, .keep_all = TRUE) %>%
+    filter(!(type == "Company" & product_services %in% c("Unknown", "character(0)")))
+
+# 
+#     visNetwork(MC3_nodes_fishupdated_filtered,
+#            MC3_edges_fishing)
+
+```
+
+```{r}
+  library(patchwork)
+  # Calculate average values
+  avg_ben_owner <- mean(MC3_nodes_fishupdated$numOfBenOwner, na.rm = TRUE)
+  avg_com_contact <- mean(MC3_nodes_fishupdated$numOfComContact, na.rm = TRUE)
+  avg_company_owned <- mean(MC3_nodes_fishupdated$numOfCompanyOwned, na.rm = TRUE)
+  
+
+  # Create separate histogram plots
+ hist1 <- ggplot(MC3_nodes_fishupdated) +
+  geom_histogram(aes(x = numOfBenOwner), fill = "skyblue", color = "black", bins = 20) +
+  geom_vline(xintercept = avg_ben_owner, color = "red", linetype = "dashed", size = 1) +
+  labs(title = "Distribution of number of Beneficial Owners of each company",
+       x = "Number of Beneficial Owners",
+       y = "Frequency",
+       caption = paste("Average owners count:", avg_ben_owner)) +
+  theme(plot.caption = element_text(hjust = 0))
  
-```
-
-
-### Text sensing with tidytext
-
-#### word count
-Below is a simple word count to understand how many companies has fishing related acitivied, by simply counting occurrence of "fish".
-
-```{r simpleWordCount}
-  #start a bit of text sensing, display the result by max value first
-
-  MC3_nodes1 <- MC3_nodes1 %>% 
-  mutate(n_fish = str_count(product_services, "fish")) %>%
-  arrange(desc(n_fish))
-
-  library(ggplot2)
-  ggplot(data = MC3_nodes1, aes(x = n_fish)) +
-  geom_histogram(bins=20, 
-                 boundary = 20,
-                 color="grey25", 
-                 fill="grey90") +
-  ggtitle("Distribution of keyword Fish frequency") 
+ 
+  hist2 <- ggplot(MC3_nodes_fishupdated) +
+    geom_histogram(aes(x = numOfComContact), fill = "lightgreen", color = "black", bins = 20) +
+    geom_vline(xintercept = avg_com_contact, color = "red", linetype = "dashed", size = 1) +
+    labs(title = "Distribution of number of Company Contacts of each company",
+         x = "Number of Company Contacts",
+         y = "Frequency",
+       caption = paste("Average company contract count:", avg_com_contact)) +
+  theme(plot.caption = element_text(hjust = 0))
   
-  ggplot(data = MC3_nodes1, aes(x = type, y = revenue_omu)) +
-  geom_bar(stat = "identity")
+  hist3 <- ggplot(MC3_nodes_fishupdated) +
+    geom_histogram(aes(x = numOfCompanyOwned), fill = "lightpink", color = "black", bins = 20) +
+    geom_vline(xintercept = avg_company_owned, color = "red", linetype = "dashed", size = 1) +
+    labs(title = "Distribution of Companies Owned by Beneficial Owner",
+         x = "Number of Companies Owned",
+         y = "Frequency",
+       caption = paste("Average companies owned count:", avg_company_owned)) +
+  theme(plot.caption = element_text(hjust = 0))
+  
+  # Arrange the plots vertically
+  hist_combined <- hist1 / hist2 / hist3 +
+  plot_layout(nrow = 3)
+  
+  hist_combined
+```
+
+Next, manually add some label for anomalies.
+
+```{r outlierDetectionAndLabeling}
+
+  # Detect outliers in numOfBenOwner
+  outliers_ben_owner <- sort(boxplot.stats(MC3_nodes_fishupdated$numOfBenOwner)$out)
+  # Detect outliers in numOfComContact
+  outliers_com_contac <- sort(boxplot.stats(MC3_nodes_fishupdated$numOfComContact)$out)
+  # Detect outliers in numOfCompanyOwned
+  outliers_company_owned <- sort(boxplot.stats(MC3_nodes_fishupdated$numOfCompanyOwned)$out)
+  
+  # Print the outlier values
+  cat("Outliers in numOfBenOwner:", outliers_ben_owner, "\n")
+  cat("Outliers in numOfComContact:", outliers_com_contac, "\n")
+  cat("Outliers in numOfCompanyOwned:", outliers_company_owned, "\n")
+  
+  MC3_nodes_fishupdated <- MC3_nodes_fishupdated %>%
+  mutate(label = case_when(
+    numOfBenOwner >= 8 ~ "Too Many Owners",
+    numOfComContact == 0 ~ "No Company Contacts",
+    numOfComContact >= 5 ~ "Many Company Contacts",
+    numOfCompanyOwned >= 2 ~ "Own more than 1 company",
+    TRUE ~ "Normal"
+  ))
 
 ```
 
-### Tokenisation
+Next we split the diagram to different view and investigate different abnormalities
 
-We then do tokenization of the Product_Services In text sensing, tokenisation is the process of **breaking up a given text** into units called tokens. We will discard characters like punctuation marks in this progress.
+```{r abnormalitiesForTooManyOwnersSingleCompany}
 
-The two basic arguments to unnest_tokens() used here are column names. First argument is **the output column name** that will be created as the text is unnested into it, and then the **input column that the text comes from** (product_services, in this case).
-
-```{r tokenization}
-  nodesToken <- MC3_nodes_clean %>%
-  unnest_tokens (word, product_services)
-  #can add in to_lower = TRUE
-  # add in strip_punct = TRUE
-
-```
-
-Below code visualize the distribution of tokenized words for prodct_service
-```{r visualizeTextSensingWord}
-  nodesToken %>%
-  count(word, sort = TRUE) %>%
-  top_n(30) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(x = word, y = n)) +
-  geom_col() +
-  xlab(NULL) +
-  coord_flip() +
-      labs(x = "Count",
-      y = "Unique words",
-      title = "Count of unique words found in product_services field")
-```
-
-With above we saw the top frequently sensed word may not be useful, not in our interest. For example, NA, "a" and "to". We will need to remove these words as stop words.
-
-#### Remove stopwords and custom words
-From the token generated, we need to take out the common/generic words and we will also exclude NA records, and there are some words obviously doesn't relate to fish activity such as machines, transportations etc. We can remove them as well.
-
-```{r stopwordsRemove}
-  custom_stopwords <- c("unknown", "machines", "transportation", "products","related", "services", "including", "systems", "equipment", "materials", "steel", "shoes", "accessories", "logistics", "footwear", "chemicals", "metal")
-
-  tidy_stopwords <- nodesToken %>%
-  anti_join(stop_words)%>%
-  anti_join(tibble(word = custom_stopwords)) %>%
-  na.omit()
-```
-
-### Visualization with bar chart after remove stopword
-With this visualization, we can detect none fishing related high frequency token and remove it by updating condition in last step.
-By several rounds of refinement, below is the diagram that have mostly fishing related keywords:
-
-```{r removeStopWordPlot}
-  tidy_stopwords %>%
-  count(word, sort = TRUE) %>%
-  top_n(30) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(x = word, y = n)) +
-  geom_col() +
-  xlab(NULL) +
-  coord_flip() +
-      labs(x = "Count",
-      y = "Unique words",
-      title = "Count of unique words found in product_services field")
+  MC3_nodes_toomanyowners <- MC3_nodes_fishupdated%>%
+  filter(label == "Too Many Owners") 
+  
+  MC3_edges_toomanyowners <- MC3_edges_fishing %>%
+  filter(source %in% MC3_nodes_toomanyowners$id)%>%
+    rename(from = source)%>%
+    rename(to = target)
+  
+  idS <- MC3_edges_toomanyowners %>%
+  select(from) %>%
+  rename(id = from)
+  idT <- MC3_edges_toomanyowners %>%
+  select(to) %>%
+  rename(id = to)
+  
+  MC3_nodes_toomanyownersView <- rbind(idS, idT) %>%
+  left_join(MC3_nodes_fishupdated, by = c("id" = "id"))%>%
+  rename (group = type) %>%   #define the type as different group for color
+  distinct()
     
+  
+  visGraph <- visNetwork(MC3_nodes_toomanyownersView,MC3_edges_toomanyowners)%>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  visNodes(color = group_colors) %>%
+    
+  visEdges(arrows = 'to') %>%
+  visOptions(selectedBy = "label",
+           highlightNearest = list(enabled = TRUE,
+                                   degree = 1,
+                                   hover = TRUE,
+                                   labelOnly = TRUE),
+            nodesIdSelection = TRUE) %>%
+  visLegend() %>%
+  visLayout(randomSeed = 123)
+
+  visGraph
+
 ```
 
-Try to get a list of companies with desired keywords
 
-```{r selectedMaritimeCompanies}
-  # Define your desired special words
- desired_words <- c("fish", "seafood", "frozen", "food", "fresh", "salmon", "freight", "canned", "meat", "tuna", "shrimp", "shellfish", "sea", "squid", "seafoods", "marine", "fillets", "foods")
-
-  # Filter the companies that contain the desired special words
-  filtered_companies <- subset(nodesToken, grepl(paste(desired_words, collapse = "|"), id, ignore.case = TRUE))
-  
-  filtered_nodes <- nodesToken %>%
-  filter(word %in% desired_words) %>%
-  distinct(id)
-  
-
-```
 
 ```{r parallelcordinate}
     #use parallel cordinate to visualize
@@ -491,13 +749,7 @@ TODO - failed need troubleshoot
   # arrange(desc(weightkg))
 ```
 
-
-
-
-
-
-##USE THIS LATER??
-**Handling missing values:** for some or the product/services, there's blank value such as "character(0)", **recode these value to NA these value before pass them for text sensing**.:
+##USE THIS LATER?? **Handling missing values:** for some or the product/services, there's blank value such as "character(0)", **recode these value to NA these value before pass them for text sensing**.:
 
 ![](images/Issue%20in%20data.JPG)
 
